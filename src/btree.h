@@ -66,7 +66,7 @@ class BTree
 			return _comp(a, b);
 		}
 
-	// friend class Iterator;
+	friend class Iterator;
 };
 
 #include "btree.cpp"

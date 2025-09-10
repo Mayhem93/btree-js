@@ -86,12 +86,9 @@ int main() {
 	std::cout << "final size: " << tree->size() << std::endl;
 	std::cout << "failed removals: " << failedToRemove << std::endl;
 
-	/* auto t0_walk = std::chrono::steady_clock::now();
+	auto t0_walk = std::chrono::steady_clock::now();
 
-	for (auto& kv : *tree) {
-		const auto& key = kv.first;
-		auto & value = kv.second;
-
+	for (auto&& [key ,value] : *tree) {
 		if (key % 23399 == 0)
 		{
 			std::cout << key << ": " << value << std::endl;
@@ -102,16 +99,7 @@ int main() {
 
 	auto duration_walk = std::chrono::duration_cast<std::chrono::milliseconds>(t1_walk - t0_walk).count();
 
-	std::cout << "walk-time: " << duration_walk << std::endl; */
+	std::cout << "walk-time: " << duration_walk << std::endl;
 
-	/* 	result = tree->search(middleKey);
-
-		if (result != nullptr)
-		{
-			std::cout << result->c_str() << std::endl;
-		} else {
-			std::cout << "not found" << std::endl;
-		}
-	 */
 	return 0;
 }

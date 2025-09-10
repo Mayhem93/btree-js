@@ -428,7 +428,7 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, std
 	}
 }
 
-/* template <typename Key, typename Value, typename Compare>
+template <typename Key, typename Value, typename Compare>
 class BTree<Key, Value, Compare>::Iterator {
 	public:
 		using difference_type = std::ptrdiff_t;
@@ -439,18 +439,28 @@ class BTree<Key, Value, Compare>::Iterator {
 		Iterator() noexcept : _currentNode(nullptr), _currentIndex(0) {}
 
 		reference operator* () const {
-			return { _currentNode->keys[_currentIndex], _currentNode->values[_currentIndex] };
+			auto &kv = _currentNode->entries[_currentIndex];
+
+			return { kv.first, kv.second };
 		}
 
 		Iterator& operator++ () {
-			advance();
+			if (!_currentNode) {
+				return *this;
+			}
+
+			if (++_currentIndex >= _currentNode->entries.size()) {
+				_currentNode = _currentNode->nextLeaf;
+				_currentIndex = 0;
+			}
 
 			return *this;
 		}
 
 		Iterator operator++ (int) {
 			Iterator tmp = *this;
-			advance();
+
+			++*this;
 
 			return tmp;
 		}
@@ -464,80 +474,8 @@ class BTree<Key, Value, Compare>::Iterator {
 		}
 
 	private:
-		struct Frame {
-			Node* node;
-			std::size_t slot;
-		};
-
-		std::vector<Frame> _stack;
 		Node* _currentNode;
 		std::size_t _currentIndex;
-
-		explicit Iterator(Node* root) {
-			if (!root) { _currentNode = nullptr; }
-			else {
-				_stack.push_back({ root, 0 });
-				_currentNode = nullptr;
-
-				advance();
-			}
-		}
-
-		void advance()
-		{
-			_currentNode = nullptr;
-
-			while (!_stack.empty())
-			{
-				auto &frame = _stack.back();
-				Node *node = frame.node;
-
-				if (node->isLeaf)
-				{
-					if (frame.slot < node->keys.size())
-					{
-						_currentNode = node;
-						_currentIndex = frame.slot++;
-						return;
-					}
-					_stack.pop_back();
-				}
-				else
-				{
-					std::size_t nKeys = node->keys.size();
-					std::size_t totalSlots = 2 * nKeys + 1; // child,key,child,key,...,child
-
-					if (frame.slot < totalSlots)
-					{
-						// even slot → child
-						if ((frame.slot & 1) == 0)
-						{
-							std::size_t cidx = frame.slot / 2;
-							++frame.slot;
-							_stack.push_back({node->children[cidx], 0});
-						}
-						// odd slot → key
-						else
-						{
-							std::size_t kidx = (frame.slot - 1) / 2; // ← correct this!
-							++frame.slot;
-							// sanity check
-							assert(kidx < nKeys);
-							_currentNode = node;
-							_currentIndex = kidx;
-							return;
-						}
-					}
-					else
-					{
-						_stack.pop_back();
-					}
-				}
-			}
-
-			_currentNode = nullptr; // end()
-			_currentIndex = 0;
-		}
 
 		friend class BTree;
 };
@@ -545,7 +483,17 @@ class BTree<Key, Value, Compare>::Iterator {
 template <typename Key, typename Value, typename Compare>
 typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
 {
-	return Iterator(_root);
+	Iterator it;
+	Node* n = _root;
+
+	while (n && !n->isLeaf) {
+		n = n->children.front();
+	}
+
+	it._currentNode = n;
+	it._currentIndex = 0;
+
+	return it;
 }
 
 template <typename Key, typename Value, typename Compare>
@@ -553,4 +501,4 @@ typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::end() 
 {
 	return Iterator();
 }
- */
+
