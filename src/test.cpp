@@ -9,7 +9,7 @@ using namespace std;
 const int nodeCapacity = 5;
 
 int main() {
-	auto tree = std::make_unique<BTree<int, std::string>>(nodeCapacity);
+	auto tree = std::make_unique<BTree<int, std::string>>();
 	const int insertions = 1000000;
 	const int middle = insertions / 2;
 	const int last = insertions - 1;
@@ -44,12 +44,11 @@ int main() {
 	auto duration_insert = std::chrono::duration_cast<std::chrono::milliseconds>(t1_insert - t0_insert).count();
 
 	std::cout << "insert-time: " << duration_insert << std::endl;
+	std::cout << "size: "<< tree->size() << std::endl;
 
 	for (int i = 0; i < 2000; ++i) {
 		bogusSearch.push_back(generate());
 	}
-
-	std::cout << "initial size: " << tree->size() << std::endl;
 
 	keysToSearch.insert(keysToSearch.end(), bogusSearch.begin(), bogusSearch.end());
 
@@ -65,28 +64,29 @@ int main() {
 	auto duration_search = std::chrono::duration_cast<std::chrono::milliseconds>(t1_search - t0_search).count();
 
 	std::cout << "search-time: " << duration_search << std::endl;
-	/* 	std::string* result = tree->search(firstKey);
+	std::size_t failedToRemove = 0;
 
-		if (result != nullptr) {
-			std::cout << result->c_str() << std::endl;
-		} */
+	auto t0_remove = std::chrono::steady_clock::now();
 
-	// tree->remove(middleKey);
-	// tree->remove(middleKey);
-	// tree->remove(lastKey);
-
-/* 	for (int keyToRemove : keysToRemove)
+	for (int keyToRemove : keysToRemove)
 	{
 		const bool result = tree->remove(keyToRemove);
 
 		if (!result) {
-			std::cout << "remove failed: " << keyToRemove << std::endl;
+			// std::cout << "remove failed: " << keyToRemove << std::endl;
+			failedToRemove++;
 		}
-	} */
+	}
 
+	auto t1_remove = std::chrono::steady_clock::now();
+
+	auto duration_remove = std::chrono::duration_cast<std::chrono::milliseconds>(t1_remove - t0_remove).count();
+
+	std::cout << "remove-time: " << duration_remove << std::endl;
 	std::cout << "final size: " << tree->size() << std::endl;
+	std::cout << "failed removals: " << failedToRemove << std::endl;
 
-	auto t0_walk = std::chrono::steady_clock::now();
+	/* auto t0_walk = std::chrono::steady_clock::now();
 
 	for (auto& kv : *tree) {
 		const auto& key = kv.first;
@@ -102,7 +102,7 @@ int main() {
 
 	auto duration_walk = std::chrono::duration_cast<std::chrono::milliseconds>(t1_walk - t0_walk).count();
 
-	std::cout << "walk-time: " << duration_walk << std::endl;
+	std::cout << "walk-time: " << duration_walk << std::endl; */
 
 	/* 	result = tree->search(middleKey);
 

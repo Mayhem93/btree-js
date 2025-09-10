@@ -3,26 +3,32 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
-#include "libusb-1.0/libusb.h"
 #include "boost/container/small_vector.hpp"
 
 template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
+		static constexpr std::size_t CAPACITY = 5;
+
 		struct Node
 		{
 			bool isLeaf;
 			std::vector<Key> keys;
-			std::vector<Value> values;
+			// std::vector<Value> values;
 			std::vector<Node*> children;
-			explicit Node(bool leaf, std::size_t capacity) : isLeaf(leaf);
+			// std::list<std::pair<Key, Value>> entries;
+			boost::container::small_vector<std::pair<Key, Value>, CAPACITY> entries;
+			Node* nextLeaf;
+			Node* prevLeaf;
+
+			explicit Node(bool leaf);
 		};
 		class Iterator;
 		Iterator begin();
 		Iterator end() noexcept;
 
-		explicit BTree(std::size_t capacity, Compare comp = Compare());
+		explicit BTree(Compare comp = Compare());
 
 		std::size_t size() const;
 
@@ -44,21 +50,9 @@ class BTree
 
 		bool insertNonFull(Node* node, const Key& key, const Value& value);
 
-		Value* searchNode(Node* node, const Key& key) const;
+		void rebalanceLeaf(Node* leaf, Node* parent, std::size_t index);
 
-		bool removeNode(Node* node, const Key& key);
-
-		std::size_t findKey(Node* node, const Key& key) const;
-
-		void removeFromNonLeaf(Node* node, std::size_t index);
-
-		void fill(Node* node, std::size_t index);
-
-		void borrowFromPrev(Node* node, std::size_t index);
-
-		void borrowFromNext(Node* node, std::size_t index);
-
-		void merge(Node* node, std::size_t index);
+		void rebalanceInternal(Node* node, Node* parent, std::size_t index);
 
 		/**
 		 * @brief Recursively destroys a node and its children in the B-tree.
@@ -72,7 +66,7 @@ class BTree
 			return _comp(a, b);
 		}
 
-	friend class Iterator;
+	// friend class Iterator;
 };
 
 #include "btree.cpp"
