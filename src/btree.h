@@ -54,6 +54,15 @@ class BTree
 
 		void rebalanceInternal(Node* node, Node* parent, std::size_t index);
 
+		// --- Recursive remove helpers ---
+		void removeFromNode(Node *node, const Key &key);
+		Key getPredecessor(Node *node, std::size_t idx) const;
+		Key getSuccessor(Node *node, std::size_t idx) const;
+		void fill(Node *node, std::size_t idx);
+		void borrowFromPrev(Node *node, std::size_t idx);
+		void borrowFromNext(Node *node, std::size_t idx);
+		void mergeNodes(Node *node, std::size_t idx);
+
 		/**
 		 * @brief Recursively destroys a node and its children in the B-tree.
 		 *
