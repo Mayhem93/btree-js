@@ -10,7 +10,7 @@ const int nodeCapacity = 5;
 
 int main() {
 	auto tree = std::make_unique<BTree<int, std::string>>();
-	const int insertions = 1000000;
+	const int insertions = 10000000;
 	const int middle = insertions / 2;
 	const int last = insertions - 1;
 
@@ -91,7 +91,7 @@ int main() {
 	for (auto&& [key ,value] : *tree) {
 		if (key % 23399 == 0)
 		{
-			std::cout << key << ": " << value << std::endl;
+			// std::cout << "walk\t" << key << ": " << value << std::endl;
 		}
 	}
 
@@ -100,6 +100,35 @@ int main() {
 	auto duration_walk = std::chrono::duration_cast<std::chrono::milliseconds>(t1_walk - t0_walk).count();
 
 	std::cout << "walk-time: " << duration_walk << std::endl;
+
+	auto t0_range = std::chrono::steady_clock::now();
+
+	auto range = tree->range(middleKey, std::size_t{10});
+	auto [firstResultKey, firstResultValue] = range[0];
+	auto [lastResultKey, lastResultValue] = range[range.size() - 1];
+
+	for (auto [key, value] : range)
+	{
+		// std::cout << "range: " << *key << ": " << *value << std::endl;
+
+		*value = std::string("hello");
+
+		// std::cout << "modified: " << *key << ": " << *value << std::endl;
+	}
+
+	std::cout << "change-value: " << *firstResultKey << ": " << *firstResultValue << std::endl;
+
+	auto t1_range = std::chrono::steady_clock::now();
+
+	auto duration_range = std::chrono::duration_cast<std::chrono::milliseconds>(t1_range - t0_range).count();
+
+	std::cout << "range-time: " << duration_range << std::endl;
+
+	auto range2 = tree->range(*firstResultKey, *lastResultKey);
+
+	std::cout << "range2-size: " << range2.size() << std::endl;
+
+	std::cout << "sa moar copii mei valoarea lu cristos " << *range2[5].second << std::endl;
 
 	return 0;
 }

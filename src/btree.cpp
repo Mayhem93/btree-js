@@ -3,6 +3,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <memory>
 
 #include "btree.h"
 
@@ -210,13 +211,18 @@ bool BTree<Key, Value, Compare>::remove(const Key& key)
 		return false;
 
 	removeFromNode(_root, key);
+
+	--_size;
+
 	// if root is internal and now empty, delete it
-	if (!_root->isLeaf && _root->keys.empty())
-	{
+	if (!_root->isLeaf && _root->keys.empty()) {
 		Node *old = _root;
+
 		_root = _root->children.front();
+
 		delete old;
 	}
+
 	return true;
 }
 
@@ -596,6 +602,99 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, std
 
 		delete right;
 	}
+}
+
+template <typename Key, typename Value, typename Compare>
+std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(const Key &low, const Key &high)
+{
+	std::vector<std::pair<const Key *, Value *>> out;
+
+	if (!_root)
+		return out;
+
+	// 1) Search down to the leaf that could contain `low`
+	Node *n = _root;
+
+	while (!n->isLeaf) {
+		auto it = std::upper_bound(
+			n->keys.begin(), n->keys.end(), low,
+			[this](auto const &a, auto const &b) { return _comp(a, b); }
+		);
+		std::size_t childIdx = std::distance(n->keys.begin(), it);
+
+		n = n->children[childIdx];
+	}
+
+	// 2) In that leaf, find the first entry >= low
+	auto entryIt = std::lower_bound(
+		n->entries.begin(), n->entries.end(), low,
+		[this](auto const &entry, auto const &val) { return _comp(entry.first, val); }
+	);
+
+	std::size_t idx = std::distance(n->entries.begin(), entryIt);
+
+	// 3) Collect until > high, hopping leaves as needed
+	while (n) {
+		while (idx < n->entries.size()) {
+			auto &kv = n->entries[idx];
+
+			if (_comp(high, kv.first)) // kv.first > high ?
+				return out;
+
+			out.emplace_back(&kv.first, &kv.second);
+			++idx;
+		}
+
+		n = n->nextLeaf;
+		idx = 0;
+	}
+
+	return out;
+}
+
+template <typename Key, typename Value, typename Compare>
+std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(const Key &low, std::size_t count)
+{
+	std::vector<std::pair<const Key *, Value *>> out;
+
+	if (!_root || count == 0)
+		return out;
+
+	// 1) Descend to leaf
+	Node *n = _root;
+
+	while (!n->isLeaf) {
+		auto it = std::upper_bound(
+			n->keys.begin(), n->keys.end(), low,
+			[this](auto const &a, auto const &b) { return _comp(a, b); }
+		);
+
+		n = n->children[std::distance(n->keys.begin(), it)];
+	}
+
+	// 2) Find first >= low
+	auto entryIt = std::lower_bound(
+		n->entries.begin(), n->entries.end(), low,
+		[this](auto const &entry, auto const &val) { return _comp(entry.first, val); }
+	);
+
+	std::size_t idx = std::distance(n->entries.begin(), entryIt);
+	std::size_t taken = 0;
+
+	// 3) Collect up to count
+	while (n && taken < count) {
+		if (idx < n->entries.size()) {
+			auto &kv = n->entries[idx++];
+			out.push_back({&kv.first, &kv.second});
+
+			++taken;
+		} else {
+			n = n->nextLeaf;
+			idx = 0;
+		}
+	}
+
+	return out;
 }
 
 template <typename Key, typename Value, typename Compare>

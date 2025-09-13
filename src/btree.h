@@ -9,15 +9,13 @@ template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
-		static constexpr std::size_t CAPACITY = 5;
+		static constexpr std::size_t CAPACITY = 24;
 
 		struct Node
 		{
 			bool isLeaf;
 			std::vector<Key> keys;
-			// std::vector<Value> values;
 			std::vector<Node*> children;
-			// std::list<std::pair<Key, Value>> entries;
 			boost::container::small_vector<std::pair<Key, Value>, CAPACITY> entries;
 			Node* nextLeaf;
 			Node* prevLeaf;
@@ -37,6 +35,9 @@ class BTree
 		Value* search(const Key &key) const;
 
 		bool remove(const Key &key);
+
+		std::vector<std::pair<const Key *, Value *>> range(const Key &low, const Key &high);
+		std::vector<std::pair<const Key *, Value *>> range(const Key &low, std::size_t count);
 
 		~BTree();
 
