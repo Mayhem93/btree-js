@@ -10,7 +10,7 @@ const int nodeCapacity = 5;
 
 int main() {
 	auto tree = std::make_unique<BTree<int, std::string>>();
-	const int insertions = 10000000;
+	const int insertions = 1e6;
 	const int middle = insertions / 2;
 	const int last = insertions - 1;
 
@@ -26,6 +26,11 @@ int main() {
 
 	for (int i = 0; i < insertions; ++i) {
 		int toInsert = generate();
+
+		if (i == middle)
+		{
+			middleKey = toInsert;
+		}
 
 		if (i > middle - 5 && i <= middle + 5001)
 		{
@@ -116,7 +121,7 @@ int main() {
 		// std::cout << "modified: " << *key << ": " << *value << std::endl;
 	}
 
-	std::cout << "change-value: " << *firstResultKey << ": " << *firstResultValue << std::endl;
+	std::cout << "Range: change-value: " << *firstResultKey << ": " << *firstResultValue << std::endl;
 
 	auto t1_range = std::chrono::steady_clock::now();
 
@@ -128,7 +133,17 @@ int main() {
 
 	std::cout << "range2-size: " << range2.size() << std::endl;
 
-	std::cout << "sa moar copii mei valoarea lu cristos " << *range2[5].second << std::endl;
+	std::cout << "Range2: get the 5th " << *range2[5].second << std::endl;
+
+	(*tree)[*firstResultKey] = std::string("AALLOOOOO");
+
+	std::cout << "X2 sa moar copii mei valoarea lu cristos " << *firstResultValue << std::endl;
+
+/* 	try {
+		(*tree)[123] = std::string("AALLOOOOO");
+	} catch (std::exception& e) {
+		std::cout << "exception: " << e.what() << std::endl;
+	} */
 
 	return 0;
 }

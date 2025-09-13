@@ -4,6 +4,8 @@
 #include <iterator>
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
+#include <format>
 
 #include "btree.h"
 
@@ -32,6 +34,16 @@ template<typename Key, typename Value, typename Compare>
 BTree<Key, Value, Compare>::~BTree()
 {
 	destroyNode(_root);
+}
+
+template <typename Key, typename Value, typename Compare>
+Value& BTree<Key, Value, Compare>::operator[](const Key &key)
+{
+	if (Value* p = search(key)) {
+		return	*p;
+	}
+
+	throw std::out_of_range(std::format("BTree lookup failed: key {} not found", key));
 }
 
 template <typename Key, typename Value, typename Compare>

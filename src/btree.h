@@ -9,7 +9,7 @@ template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
-		static constexpr std::size_t CAPACITY = 24;
+		static constexpr std::size_t CAPACITY = 5;
 
 		struct Node
 		{
@@ -22,6 +22,9 @@ class BTree
 
 			explicit Node(bool leaf);
 		};
+
+		Value& operator[](const Key& key);
+
 		class Iterator;
 		Iterator begin();
 		Iterator end() noexcept;
