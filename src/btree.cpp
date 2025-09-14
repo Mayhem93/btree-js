@@ -9,6 +9,13 @@
 
 #include "btree.h"
 
+#ifdef BTREE_ENABLE_JSON
+#include <nlohmann/json.hpp>
+#include <sstream>
+#include <iomanip>
+#include <functional>
+#endif
+
 template<typename Key, typename Value, typename Compare>
 BTree<Key, Value, Compare>::Node::Node(bool leaf)
 	: isLeaf(leaf),
@@ -42,7 +49,7 @@ Value& BTree<Key, Value, Compare>::operator[](const Key &key)
 		return	*p;
 	}
 
-	throw std::out_of_range(std::format("BTree lookup failed: key {} not found", key));
+	throw std::out_of_range(std::format("BTree[] lookup failed: key {} not found", key));
 }
 
 template <typename Key, typename Value, typename Compare>
@@ -705,6 +712,69 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 
 	return out;
 }
+
+#ifdef BTREE_ENABLE_JSON
+
+template <typename Key, typename Value, typename Compare>
+std::string BTree<Key, Value, Compare>::serializeToJson() const
+{
+	using json = nlohmann::ordered_json;
+
+	auto ptrToHex = [](auto *ptr)
+	{
+		std::ostringstream ss;
+		ss << "0x"
+		   << std::hex << std::uppercase
+		   << reinterpret_cast<std::uintptr_t>(ptr);
+
+		return ss.str();
+	};
+
+	// Helper to turn a Node* into a JSON object
+	std::function<json(Node *)> dumpNode = [&](Node *node) -> json
+	{
+		json j;
+
+		// id as hex pointer
+		j["id"] = ptrToHex(node);
+
+		j["isLeaf"] = node->isLeaf;
+
+		// entries: [ [key,value], [key,value], … ]
+		j["entries"] = json::array();
+		for (auto const &[k, v] : node->entries)
+		{
+			j["entries"].push_back(json::array({k, v}));
+		}
+
+		// children: recurse or empty array for leaves
+		j["children"] = json::array();
+
+		if (!node->isLeaf)
+		{
+			for (Node *child : node->children)
+			{
+				j["children"].push_back(dumpNode(child));
+			}
+		} else {
+			json prev = node->prevLeaf ? json(ptrToHex(node->prevLeaf)) : json(nullptr);
+			json next = node->nextLeaf ? json(ptrToHex(node->nextLeaf)) : json(nullptr);
+
+			j["prev"] = std::move(prev);
+			j["next"] = std::move(next);
+		}
+
+		return j;
+	};
+
+	// top‐level wrapper
+	json out;
+	out["node"] = dumpNode(_root);
+
+	return out.dump(2); // 2-space indent
+}
+
+#endif
 
 template <typename Key, typename Value, typename Compare>
 class BTree<Key, Value, Compare>::Iterator {

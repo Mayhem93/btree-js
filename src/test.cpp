@@ -4,8 +4,23 @@
 #include <chrono>
 #include <string>
 
-int main() {
-	auto tree = std::make_unique<BTree<int, std::string>>();
+void jsonSerializationTests(BTree<int, std::string>* tree) {
+	const int insertions = 11;
+
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::mt19937 generate(seed);
+
+	for (int i = 0; i < insertions; ++i)
+	{
+		int toInsert = generate();
+
+		tree->insert(toInsert, "1");
+	}
+
+	std::cout << tree->serializeToJson() << std::endl;
+}
+
+void standardTests(BTree<int, std::string>* tree) {
 	const int insertions = 1e6;
 	const int middle = insertions / 2;
 
@@ -19,7 +34,8 @@ int main() {
 
 	auto t0_insert = std::chrono::steady_clock::now();
 
-	for (int i = 0; i < insertions; ++i) {
+	for (int i = 0; i < insertions; ++i)
+	{
 		int toInsert = generate();
 
 		if (i == middle)
@@ -44,9 +60,10 @@ int main() {
 	auto duration_insert = std::chrono::duration_cast<std::chrono::milliseconds>(t1_insert - t0_insert).count();
 
 	std::cout << "insert-time: " << duration_insert << std::endl;
-	std::cout << "size: "<< tree->size() << std::endl;
+	std::cout << "size: " << tree->size() << std::endl;
 
-	for (int i = 0; i < 2000; ++i) {
+	for (int i = 0; i < 2000; ++i)
+	{
 		bogusSearch.push_back(generate());
 	}
 
@@ -56,7 +73,7 @@ int main() {
 
 	for (int key : keysToSearch)
 	{
-		std::string* result = tree->search(key);
+		std::string *result = tree->search(key);
 	}
 
 	auto t1_search = std::chrono::steady_clock::now();
@@ -72,7 +89,8 @@ int main() {
 	{
 		const bool result = tree->remove(keyToRemove);
 
-		if (!result) {
+		if (!result)
+		{
 			// std::cout << "remove failed: " << keyToRemove << std::endl;
 			failedToRemove++;
 		}
@@ -88,7 +106,8 @@ int main() {
 
 	auto t0_walk = std::chrono::steady_clock::now();
 
-	for (auto&& [key ,value] : *tree) {
+	for (auto &&[key, value] : *tree)
+	{
 		if (key % 23399 == 0)
 		{
 			// std::cout << "walk\t" << key << ": " << value << std::endl;
@@ -134,11 +153,22 @@ int main() {
 
 	std::cout << "X2 sa moar copii mei valoarea lu cristos " << *firstResultValue << std::endl;
 
-/* 	try {
+	try
+	{
 		(*tree)[123] = std::string("AALLOOOOO");
-	} catch (std::exception& e) {
+	}
+	catch (std::exception &e)
+	{
 		std::cout << "exception: " << e.what() << std::endl;
-	} */
+	}
+}
+
+int main() {
+	auto tree = std::make_unique<BTree<int, std::string>>();
+
+	// standardTests(tree.get());
+
+	jsonSerializationTests(tree.get());
 
 	return 0;
 }
