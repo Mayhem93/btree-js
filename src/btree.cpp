@@ -14,7 +14,6 @@ BTree<Key, Value, Compare>::Node::Node(bool leaf)
 	: isLeaf(leaf),
 	nextLeaf(nullptr),
 	prevLeaf(nullptr)
-
 {
 	if (!isLeaf) {
 		keys.reserve(2 * CAPACITY - 1);
@@ -25,7 +24,7 @@ BTree<Key, Value, Compare>::Node::Node(bool leaf)
  }
 
 template<typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::BTree(Compare comp) : _comp(comp), _size(0)
+BTree<Key, Value, Compare>::BTree(Compare comp) : _comp(std::move(comp)), _size(0)
 {
 	_root = new Node(true);
 }
@@ -416,6 +415,7 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 				node->entries.end(),
 				[&](auto const &p)
 				{ return !less(p.first, key) && !less(key, p.first); });
+
 			if (eit != node->entries.end())
 			{
 				node->entries.erase(eit);
@@ -434,12 +434,14 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 			if (leftCount >= CAPACITY)
 			{
 				Key pred = getPredecessor(node, idx);
+
 				node->keys[idx] = pred;
 				removeFromNode(leftChild, pred);
 			}
 			else if (rightCount >= CAPACITY)
 			{
 				Key succ = getSuccessor(node, idx);
+
 				node->keys[idx] = succ;
 				removeFromNode(rightChild, succ);
 			}
@@ -456,9 +458,9 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 	{
 		if (node->isLeaf)
 		{
-			// not found
 			return;
 		}
+
 		bool lastChild = (idx == node->keys.size());
 		Node *child = node->children[idx];
 		auto childCount = child->isLeaf ? child->entries.size()
@@ -488,7 +490,6 @@ void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::si
 		auto kv = left->entries.back();
 
 		left->entries.pop_back();
-		// leaf->entries.push_front(kv);
 		leaf->entries.insert(leaf->entries.begin(), std::move(kv));
 		parent->keys[index - 1] = leaf->entries.front().first;
 
@@ -506,8 +507,6 @@ void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::si
 	}
 
 	if (left) {
-		// left->entries.splice(left->entries.end(), leaf->entries);
-
 		left->entries.insert(
 			left->entries.end(),
 			std::make_move_iterator(leaf->entries.begin()),
@@ -527,8 +526,6 @@ void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::si
 
 		delete leaf;
 	} else {
-		// leaf->entries.splice(leaf->entries.end(), right->entries);
-
 		leaf->entries.insert(
 			leaf->entries.end(),
 			std::make_move_iterator(right->entries.begin()),

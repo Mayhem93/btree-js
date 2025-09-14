@@ -9,7 +9,7 @@ template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
-		static constexpr std::size_t CAPACITY = 5;
+		static constexpr std::size_t CAPACITY = 32;
 
 		struct Node
 		{
@@ -29,18 +29,24 @@ class BTree
 		Iterator begin();
 		Iterator end() noexcept;
 
-		explicit BTree(Compare comp = Compare());
+		explicit BTree(Compare comp = Compare{});
 
 		std::size_t size() const;
 
+		/**
+		 * Insert a key-value pair into the BTree.
+		 * @param key The key to insert.
+		 * @param value The value to insert.
+		 * @return True if the insertion was successful, false otherwise.
+		 */
 		bool insert(const Key &key, const Value &value);
 
 		Value* search(const Key &key) const;
 
 		bool remove(const Key &key);
 
-		std::vector<std::pair<const Key *, Value *>> range(const Key &low, const Key &high);
-		std::vector<std::pair<const Key *, Value *>> range(const Key &low, std::size_t count);
+		std::vector<std::pair<const Key*, Value*>> range(const Key &low, const Key &high);
+		std::vector<std::pair<const Key*, Value*>> range(const Key &low, std::size_t count);
 
 		~BTree();
 
@@ -50,6 +56,14 @@ class BTree
 		Compare _comp;
 		std::size_t _size{0};
 
+		/**
+		 * Divides a full child node into two siblings by moving the upper half of its
+		 * entries into a new node, promotes the median key into the parent, and links
+		 * the new sibling so the tree remains balanced.
+		 * @param parent The parent of the node to split.
+		 * @param index The index in the node where to to split.
+		 * @return void
+		 */
 		void splitChild(Node* parent, std::size_t index);
 
 		bool insertNonFull(Node* node, const Key& key, const Value& value);
@@ -58,7 +72,6 @@ class BTree
 
 		void rebalanceInternal(Node* node, Node* parent, std::size_t index);
 
-		// --- Recursive remove helpers ---
 		void removeFromNode(Node *node, const Key &key);
 		Key getPredecessor(Node *node, std::size_t idx) const;
 		Key getSuccessor(Node *node, std::size_t idx) const;
@@ -68,12 +81,18 @@ class BTree
 		void mergeNodes(Node *node, std::size_t idx);
 
 		/**
-		 * @brief Recursively destroys a node and its children in the B-tree.
-		 *
-		 * @param node The node to destroy.
+		 * Recursively destroys nodes and their children
+		 * @param node The starting node to delete.
+		 * @return void
 		 */
 		void destroyNode(Node *node);
 
+		/**
+		 * Compares two keys, wrapper function for `Compare _comp`
+		 * @param a The first key to compare.
+		 * @param b The second key to compare.
+		 * @return True if a is "less" than b, false otherwise.
+		 */
 		inline bool less(const Key& a, const Key& b) const
 		{
 			return _comp(a, b);

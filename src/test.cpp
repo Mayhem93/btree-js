@@ -4,18 +4,13 @@
 #include <chrono>
 #include <string>
 
-using namespace std;
-
-const int nodeCapacity = 5;
-
 int main() {
 	auto tree = std::make_unique<BTree<int, std::string>>();
 	const int insertions = 1e6;
 	const int middle = insertions / 2;
-	const int last = insertions - 1;
 
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-	mt19937 generate(seed);
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::mt19937 generate(seed);
 
 	int firstKey, middleKey, lastKey;
 	std::vector<int> keysToRemove;
