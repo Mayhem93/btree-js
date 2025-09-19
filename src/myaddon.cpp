@@ -1,47 +1,46 @@
 #include <node.h>
 #include <stdlib.h>
-#include <random>
-#include <chrono>
 
 #include "btree.h"
 
-using namespace std;
+using namespace v8;
 
-namespace demo {
-  using v8::FunctionCallbackInfo;
-  using v8::Isolate;
-  using v8::Local;
-  using v8::Object;
-  using v8::String;
-  using v8::Value;
-  using v8::Null;
+namespace BTree {
 
-  void Hello(const FunctionCallbackInfo<Value>& args) {
+  void BTreeWrapper (const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
 
-    auto tree = std::make_unique<BTree<int, std::string>>(50);
-    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-    mt19937 generate (seed);
-
-    tree->insert(generate(), "hello xxx");
-    tree->insert(generate(), "hello yyy");
-    tree->insert(generate(), "hello zzz");
-
-    auto result = tree->search(5);
-
-    if (result) {
-      args.GetReturnValue().Set(
-        String::NewFromUtf8(isolate, result->c_str(), v8::NewStringType::kNormal).ToLocalChecked()
+    if (!args.IsConstructCall()) {
+      isolate->ThrowException(
+        Exception::TypeError(String::NewFromUtf8(
+          isolate,
+          "Cannot call constructor as function",
+          NewStringType::kNormal
+        ).ToLocalChecked())
       );
-    } else {
-      args.GetReturnValue().Set(v8::Null(isolate));
+
+      return ;
     }
 
-    // args.GetReturnValue().Set(String::NewFromUtf8(isolate, "{put the result here please}").ToLocalChecked());
+    // auto* tree = new BTree
   }
 
   void Initialize(Local<Object> exports) {
-    NODE_SET_METHOD(exports, "hello", Hello);
+    Isolate *isolate = exports->GetIsolate();
+    Local<Context> ctx = isolate->GetCurrentContext();
+
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, BTreeWrapper);
+
+    tpl->SetClassName(String::NewFromUtf8(isolate, "BTree", NewStringType::kNormal).ToLocalChecked());
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    Local<Function> classFunc = tpl->GetFunction(ctx).ToLocalChecked();
+
+    exports->Set(
+      ctx,
+      String::NewFromUtf8(isolate, "BTree", NewStringType::kNormal).ToLocalChecked(),
+      classFunc
+    ).Check();
   }
 
   NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)

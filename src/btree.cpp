@@ -23,23 +23,23 @@ BTree<Key, Value, Compare>::Node::Node(bool leaf)
 	prevLeaf(nullptr)
 {
 	if (!isLeaf) {
-		keys.reserve(2 * CAPACITY - 1);
-		children.reserve(2 * CAPACITY);
+		keys.reserve(2 * BTree::s_CAPACITY - 1);
+		children.reserve(2 * BTree::s_CAPACITY);
 	}
 
-	entries.reserve(2 * CAPACITY - 1);
+	entries.reserve(2 * BTree::s_CAPACITY - 1);
  }
 
 template<typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::BTree(Compare comp) : _comp(std::move(comp)), _size(0)
+BTree<Key, Value, Compare>::BTree(Compare comp) : m_Comp(std::move(comp)), m_Size(0)
 {
-	_root = new Node(true);
+	m_Root = new Node(true);
 }
 
 template<typename Key, typename Value, typename Compare>
 BTree<Key, Value, Compare>::~BTree()
 {
-	destroyNode(_root);
+	destroyNode(m_Root);
 }
 
 template <typename Key, typename Value, typename Compare>
@@ -55,7 +55,7 @@ Value& BTree<Key, Value, Compare>::operator[](const Key &key)
 template <typename Key, typename Value, typename Compare>
 std::size_t BTree<Key, Value, Compare>::size() const
 {
-	return _size;
+	return m_Size;
 }
 
 template <typename Key, typename Value, typename Compare>
@@ -79,7 +79,7 @@ void BTree<Key, Value, Compare>::splitChild(Node* parent, std::size_t index)
 	Node* sibling = new Node(child->isLeaf);
 
 	if (child->isLeaf) {
-		auto midIt = child->entries.begin() + CAPACITY;
+		auto midIt = child->entries.begin() + BTree::s_CAPACITY;
 
 		sibling->entries.insert(
 			sibling->entries.end(),
@@ -103,7 +103,7 @@ void BTree<Key, Value, Compare>::splitChild(Node* parent, std::size_t index)
 		parent->keys.insert(parent->keys.begin() + index, promoteKey);
 		parent->children.insert(parent->children.begin() + index + 1, sibling);
 	} else {
-		std::size_t mid = CAPACITY - 1;
+		std::size_t mid = BTree::s_CAPACITY - 1;
 		Key medianKey = std::move(child->keys[mid]);
 
 		sibling->keys.insert(
@@ -155,7 +155,7 @@ bool BTree<Key, Value, Compare>::insertNonFull(Node* node, const Key& key, const
 
 	Node* child = node->children[i];
 
-	bool childFull = child->isLeaf ? (child->entries.size() >= 2 * CAPACITY - 1) : (child->keys.size() >= 2 * CAPACITY - 1);
+	bool childFull = child->isLeaf ? (child->entries.size() >= 2 * BTree::s_CAPACITY - 1) : (child->keys.size() >= 2 * BTree::s_CAPACITY - 1);
 
 	if (childFull) {
 		splitChild(node, i);
@@ -171,21 +171,21 @@ bool BTree<Key, Value, Compare>::insertNonFull(Node* node, const Key& key, const
 template <typename Key, typename Value, typename Compare>
 bool BTree<Key, Value, Compare>::insert(const Key& key, const Value& value)
 {
-	bool rootFull = _root->isLeaf ? (_root->entries.size() >= 2 * CAPACITY - 1) : (_root->keys.size() >= 2 * CAPACITY - 1);
+	bool rootFull = m_Root->isLeaf ? (m_Root->entries.size() >= 2 * BTree::s_CAPACITY - 1) : (m_Root->keys.size() >= 2 * BTree::s_CAPACITY - 1);
 
 	if (rootFull) {
-		Node* oldRoot = _root;
+		Node* oldRoot = m_Root;
 		Node* newRoot = new Node(false);
 
 		newRoot->children.push_back(oldRoot);
 		splitChild(newRoot, 0);
-		_root = newRoot;
+		m_Root = newRoot;
 	}
 
-	bool inserted = insertNonFull(_root, key, value);
+	bool inserted = insertNonFull(m_Root, key, value);
 
 	if (inserted) {
-		++_size;
+		++m_Size;
 	}
 
 	return inserted;
@@ -194,14 +194,14 @@ bool BTree<Key, Value, Compare>::insert(const Key& key, const Value& value)
 template <typename Key, typename Value, typename Compare>
 Value* BTree<Key, Value, Compare>::search(const Key& key) const
 {
-	Node* node = _root;
+	Node* node = m_Root;
 
 	while (!node->isLeaf) {
 		auto it = std::lower_bound(
 			node->keys.begin(),
 			node->keys.end(),
 			key,
-			_comp
+			m_Comp
 		);
 
 		std::size_t idx = std::distance(node->keys.begin(), it);
@@ -225,18 +225,18 @@ Value* BTree<Key, Value, Compare>::search(const Key& key) const
 template <typename Key, typename Value, typename Compare>
 bool BTree<Key, Value, Compare>::remove(const Key& key)
 {
-	if (!_root)
+	if (!m_Root)
 		return false;
 
-	removeFromNode(_root, key);
+	removeFromNode(m_Root, key);
 
-	--_size;
+	--m_Size;
 
 	// if root is internal and now empty, delete it
-	if (!_root->isLeaf && _root->keys.empty()) {
-		Node *old = _root;
+	if (!m_Root->isLeaf && m_Root->keys.empty()) {
+		Node *old = m_Root;
 
-		_root = _root->children.front();
+		m_Root = m_Root->children.front();
 
 		delete old;
 	}
@@ -276,14 +276,14 @@ void BTree<Key, Value, Compare>::fill(Node *node, std::size_t idx)
 	// try borrow from left sibling
 	if (idx > 0 && ((node->children[idx - 1]->isLeaf
 		? node->children[idx - 1]->entries.size()
-		: node->children[idx - 1]->keys.size()) >= CAPACITY))
+		: node->children[idx - 1]->keys.size()) >= BTree::s_CAPACITY))
 	{
 		borrowFromPrev(node, idx);
 	}
 	// else try borrow from right sibling
 	else if (idx < node->keys.size() && ((node->children[idx + 1]->isLeaf
 		? node->children[idx + 1]->entries.size()
-		: node->children[idx + 1]->keys.size()) >= CAPACITY))
+		: node->children[idx + 1]->keys.size()) >= BTree::s_CAPACITY))
 	{
 		borrowFromNext(node, idx);
 	}
@@ -438,14 +438,14 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 			auto rightCount = rightChild->isLeaf ? rightChild->entries.size()
 												 : rightChild->keys.size();
 
-			if (leftCount >= CAPACITY)
+			if (leftCount >= BTree::s_CAPACITY)
 			{
 				Key pred = getPredecessor(node, idx);
 
 				node->keys[idx] = pred;
 				removeFromNode(leftChild, pred);
 			}
-			else if (rightCount >= CAPACITY)
+			else if (rightCount >= BTree::s_CAPACITY)
 			{
 				Key succ = getSuccessor(node, idx);
 
@@ -474,7 +474,7 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 										: child->keys.size();
 
 		// ensure child has at least CAPACITY keys
-		if (childCount < CAPACITY)
+		if (childCount < BTree::s_CAPACITY)
 		{
 			fill(node, idx);
 		}
@@ -489,7 +489,7 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 
 template <typename Key, typename Value, typename Compare>
 void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::size_t index) {
-	const std::size_t minEntries = CAPACITY - 1;
+	const std::size_t minEntries = BTree::s_CAPACITY - 1;
 	Node* left = index > 0 ? parent->children[index - 1] : nullptr;
 	Node* right = index + 1 < parent->children.size() ? parent->children[index + 1] : nullptr;
 
@@ -556,7 +556,7 @@ void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::si
 
 template <typename Key, typename Value, typename Compare>
 void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, std::size_t index) {
-	const std::size_t minKeys = CAPACITY - 1;
+	const std::size_t minKeys = BTree::s_CAPACITY - 1;
 	Node* left = index > 0 ? parent->children[index - 1] : nullptr;
 	Node* right = index + 1 < parent->children.size() ? parent->children[index + 1] : nullptr;
 
@@ -625,16 +625,16 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 {
 	std::vector<std::pair<const Key *, Value *>> out;
 
-	if (!_root)
+	if (!m_Root)
 		return out;
 
 	// 1) Search down to the leaf that could contain `low`
-	Node *n = _root;
+	Node *n = m_Root;
 
 	while (!n->isLeaf) {
 		auto it = std::upper_bound(
 			n->keys.begin(), n->keys.end(), low,
-			[this](auto const &a, auto const &b) { return _comp(a, b); }
+			[this](auto const &a, auto const &b) { return m_Comp(a, b); }
 		);
 		std::size_t childIdx = std::distance(n->keys.begin(), it);
 
@@ -644,7 +644,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 	// 2) In that leaf, find the first entry >= low
 	auto entryIt = std::lower_bound(
 		n->entries.begin(), n->entries.end(), low,
-		[this](auto const &entry, auto const &val) { return _comp(entry.first, val); }
+		[this](auto const &entry, auto const &val) { return m_Comp(entry.first, val); }
 	);
 
 	std::size_t idx = std::distance(n->entries.begin(), entryIt);
@@ -654,7 +654,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 		while (idx < n->entries.size()) {
 			auto &kv = n->entries[idx];
 
-			if (_comp(high, kv.first)) // kv.first > high ?
+			if (m_Comp(high, kv.first)) // kv.first > high ?
 				return out;
 
 			out.emplace_back(&kv.first, &kv.second);
@@ -673,16 +673,16 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 {
 	std::vector<std::pair<const Key *, Value *>> out;
 
-	if (!_root || count == 0)
+	if (!m_Root || count == 0)
 		return out;
 
 	// 1) Descend to leaf
-	Node *n = _root;
+	Node *n = m_Root;
 
 	while (!n->isLeaf) {
 		auto it = std::upper_bound(
 			n->keys.begin(), n->keys.end(), low,
-			[this](auto const &a, auto const &b) { return _comp(a, b); }
+			[this](auto const &a, auto const &b) { return m_Comp(a, b); }
 		);
 
 		n = n->children[std::distance(n->keys.begin(), it)];
@@ -691,7 +691,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 	// 2) Find first >= low
 	auto entryIt = std::lower_bound(
 		n->entries.begin(), n->entries.end(), low,
-		[this](auto const &entry, auto const &val) { return _comp(entry.first, val); }
+		[this](auto const &entry, auto const &val) { return m_Comp(entry.first, val); }
 	);
 
 	std::size_t idx = std::distance(n->entries.begin(), entryIt);
@@ -769,7 +769,7 @@ std::string BTree<Key, Value, Compare>::serializeToJson() const
 
 	// top‐level wrapper
 	json out;
-	out["node"] = dumpNode(_root);
+	out["node"] = dumpNode(m_Root);
 
 	return out.dump(2); // 2-space indent
 }
@@ -832,7 +832,7 @@ template <typename Key, typename Value, typename Compare>
 typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
 {
 	Iterator it;
-	Node* n = _root;
+	Node* n = m_Root;
 
 	while (n && !n->isLeaf) {
 		n = n->children.front();

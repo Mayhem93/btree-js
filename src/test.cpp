@@ -166,9 +166,9 @@ void standardTests(BTree<int, std::string>* tree) {
 int main() {
 	auto tree = std::make_unique<BTree<int, std::string>>();
 
-	// standardTests(tree.get());
+	standardTests(tree.get());
 
-	jsonSerializationTests(tree.get());
+	// jsonSerializationTests(tree.get());
 
 	return 0;
 }
