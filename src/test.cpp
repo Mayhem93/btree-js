@@ -81,7 +81,7 @@ void standardTests(BTree<int, std::string>* tree) {
 	auto duration_search = std::chrono::duration_cast<std::chrono::milliseconds>(t1_search - t0_search).count();
 
 	std::cout << "search-time: " << duration_search << std::endl;
-	std::size_t failedToRemove = 0;
+	size_t failedToRemove = 0;
 
 	auto t0_remove = std::chrono::steady_clock::now();
 
@@ -122,7 +122,7 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	auto t0_range = std::chrono::steady_clock::now();
 
-	auto range = tree->range(middleKey, std::size_t{10});
+	auto range = tree->range(middleKey, size_t{10});
 	auto [firstResultKey, firstResultValue] = range[0];
 	auto [lastResultKey, lastResultValue] = range[range.size() - 1];
 

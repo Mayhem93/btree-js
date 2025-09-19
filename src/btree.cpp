@@ -53,7 +53,7 @@ Value& BTree<Key, Value, Compare>::operator[](const Key &key)
 }
 
 template <typename Key, typename Value, typename Compare>
-std::size_t BTree<Key, Value, Compare>::size() const
+size_t BTree<Key, Value, Compare>::size() const
 {
 	return m_Size;
 }
@@ -73,7 +73,7 @@ void BTree<Key, Value, Compare>::destroyNode(Node *node)
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::splitChild(Node* parent, std::size_t index)
+void BTree<Key, Value, Compare>::splitChild(Node* parent, size_t index)
 {
 	Node* child = parent->children[index];
 	Node* sibling = new Node(child->isLeaf);
@@ -103,7 +103,7 @@ void BTree<Key, Value, Compare>::splitChild(Node* parent, std::size_t index)
 		parent->keys.insert(parent->keys.begin() + index, promoteKey);
 		parent->children.insert(parent->children.begin() + index + 1, sibling);
 	} else {
-		std::size_t mid = BTree::s_CAPACITY - 1;
+		size_t mid = BTree::s_CAPACITY - 1;
 		Key medianKey = std::move(child->keys[mid]);
 
 		sibling->keys.insert(
@@ -147,7 +147,7 @@ bool BTree<Key, Value, Compare>::insertNonFull(Node* node, const Key& key, const
 		return true;
 	}
 
-	std::size_t i = 0;
+	size_t i = 0;
 
 	while (i < node->keys.size() && less(node->keys[i], key)) {
 		++i;
@@ -204,7 +204,7 @@ Value* BTree<Key, Value, Compare>::search(const Key& key) const
 			m_Comp
 		);
 
-		std::size_t idx = std::distance(node->keys.begin(), it);
+		size_t idx = std::distance(node->keys.begin(), it);
 		node = node->children[idx];
 	}
 
@@ -245,7 +245,7 @@ bool BTree<Key, Value, Compare>::remove(const Key& key)
 }
 
 template <typename Key, typename Value, typename Compare>
-auto BTree<Key, Value, Compare>::getPredecessor(Node *node, std::size_t idx) const -> Key
+auto BTree<Key, Value, Compare>::getPredecessor(Node *node, size_t idx) const -> Key
 {
 	Node *cur = node->children[idx];
 
@@ -257,7 +257,7 @@ auto BTree<Key, Value, Compare>::getPredecessor(Node *node, std::size_t idx) con
 }
 
 template <typename Key, typename Value, typename Compare>
-auto BTree<Key, Value, Compare>::getSuccessor(Node *node, std::size_t idx) const -> Key
+auto BTree<Key, Value, Compare>::getSuccessor(Node *node, size_t idx) const -> Key
 {
 	Node *cur = node->children[idx + 1];
 
@@ -269,7 +269,7 @@ auto BTree<Key, Value, Compare>::getSuccessor(Node *node, std::size_t idx) const
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::fill(Node *node, std::size_t idx)
+void BTree<Key, Value, Compare>::fill(Node *node, size_t idx)
 {
 	Node *child = node->children[idx];
 
@@ -298,7 +298,7 @@ void BTree<Key, Value, Compare>::fill(Node *node, std::size_t idx)
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::borrowFromPrev(Node *node, std::size_t idx)
+void BTree<Key, Value, Compare>::borrowFromPrev(Node *node, size_t idx)
 {
 	Node *child = node->children[idx];
 	Node *left = node->children[idx - 1];
@@ -332,7 +332,7 @@ void BTree<Key, Value, Compare>::borrowFromPrev(Node *node, std::size_t idx)
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::borrowFromNext(Node *node, std::size_t idx)
+void BTree<Key, Value, Compare>::borrowFromNext(Node *node, size_t idx)
 {
 	Node *child = node->children[idx];
 	Node *right = node->children[idx + 1];
@@ -358,7 +358,7 @@ void BTree<Key, Value, Compare>::borrowFromNext(Node *node, std::size_t idx)
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::mergeNodes(Node *node, std::size_t idx)
+void BTree<Key, Value, Compare>::mergeNodes(Node *node, size_t idx)
 {
 	Node *left = node->children[idx];
 	Node *right = node->children[idx + 1];
@@ -407,7 +407,7 @@ template <typename Key, typename Value, typename Compare>
 void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 {
 	// 1) Find the first index ≥ key
-	std::size_t idx = 0;
+	size_t idx = 0;
 	while (idx < node->keys.size() && less(node->keys[idx], key))
 		++idx;
 
@@ -488,8 +488,8 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::size_t index) {
-	const std::size_t minEntries = BTree::s_CAPACITY - 1;
+void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, size_t index) {
+	const size_t minEntries = BTree::s_CAPACITY - 1;
 	Node* left = index > 0 ? parent->children[index - 1] : nullptr;
 	Node* right = index + 1 < parent->children.size() ? parent->children[index + 1] : nullptr;
 
@@ -555,8 +555,8 @@ void BTree<Key, Value, Compare>::rebalanceLeaf(Node* leaf, Node* parent, std::si
 }
 
 template <typename Key, typename Value, typename Compare>
-void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, std::size_t index) {
-	const std::size_t minKeys = BTree::s_CAPACITY - 1;
+void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, size_t index) {
+	const size_t minKeys = BTree::s_CAPACITY - 1;
 	Node* left = index > 0 ? parent->children[index - 1] : nullptr;
 	Node* right = index + 1 < parent->children.size() ? parent->children[index + 1] : nullptr;
 
@@ -636,7 +636,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 			n->keys.begin(), n->keys.end(), low,
 			[this](auto const &a, auto const &b) { return m_Comp(a, b); }
 		);
-		std::size_t childIdx = std::distance(n->keys.begin(), it);
+		size_t childIdx = std::distance(n->keys.begin(), it);
 
 		n = n->children[childIdx];
 	}
@@ -647,7 +647,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 		[this](auto const &entry, auto const &val) { return m_Comp(entry.first, val); }
 	);
 
-	std::size_t idx = std::distance(n->entries.begin(), entryIt);
+	size_t idx = std::distance(n->entries.begin(), entryIt);
 
 	// 3) Collect until > high, hopping leaves as needed
 	while (n) {
@@ -669,7 +669,7 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 }
 
 template <typename Key, typename Value, typename Compare>
-std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(const Key &low, std::size_t count)
+std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(const Key &low, size_t count)
 {
 	std::vector<std::pair<const Key *, Value *>> out;
 
@@ -694,8 +694,8 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 		[this](auto const &entry, auto const &val) { return m_Comp(entry.first, val); }
 	);
 
-	std::size_t idx = std::distance(n->entries.begin(), entryIt);
-	std::size_t taken = 0;
+	size_t idx = std::distance(n->entries.begin(), entryIt);
+	size_t taken = 0;
 
 	// 3) Collect up to count
 	while (n && taken < count) {
@@ -725,7 +725,7 @@ std::string BTree<Key, Value, Compare>::serializeToJson() const
 		std::ostringstream ss;
 		ss << "0x"
 		   << std::hex << std::uppercase
-		   << reinterpret_cast<std::uintptr_t>(ptr);
+		   << reinterpret_cast<uintptr_t>(ptr);
 
 		return ss.str();
 	};
@@ -784,22 +784,22 @@ class BTree<Key, Value, Compare>::Iterator {
 		using reference = value_type;
 		using iterator_category = std::forward_iterator_tag;
 
-		Iterator() noexcept : _currentNode(nullptr), _currentIndex(0) {}
+		Iterator() noexcept : m_CurrentNode(nullptr), m_CurrentIndex(0) {}
 
 		reference operator* () const {
-			auto &kv = _currentNode->entries[_currentIndex];
+			auto &kv = m_CurrentNode->entries[m_CurrentIndex];
 
 			return { kv.first, kv.second };
 		}
 
 		Iterator& operator++ () {
-			if (!_currentNode) {
+			if (!m_CurrentNode) {
 				return *this;
 			}
 
-			if (++_currentIndex >= _currentNode->entries.size()) {
-				_currentNode = _currentNode->nextLeaf;
-				_currentIndex = 0;
+			if (++m_CurrentIndex >= m_CurrentNode->entries.size()) {
+				m_CurrentNode = m_CurrentNode->nextLeaf;
+				m_CurrentIndex = 0;
 			}
 
 			return *this;
@@ -814,7 +814,7 @@ class BTree<Key, Value, Compare>::Iterator {
 		}
 
 		bool operator== (Iterator const& o) const {
-			return _currentNode == o._currentNode && _currentIndex == o._currentIndex;
+			return m_CurrentNode == o.m_CurrentNode && m_CurrentIndex == o.m_CurrentIndex;
 		}
 
 		bool operator!= (Iterator const& o) const {
@@ -822,8 +822,8 @@ class BTree<Key, Value, Compare>::Iterator {
 		}
 
 	private:
-		Node* _currentNode;
-		std::size_t _currentIndex;
+		Node* m_CurrentNode;
+		size_t m_CurrentIndex;
 
 		friend class BTree;
 };
@@ -838,8 +838,8 @@ typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin(
 		n = n->children.front();
 	}
 
-	it._currentNode = n;
-	it._currentIndex = 0;
+	it.m_CurrentNode = n;
+	it.m_CurrentIndex = 0;
 
 	return it;
 }

@@ -13,7 +13,7 @@ template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
-		static constexpr std::size_t s_CAPACITY = 32;
+		static constexpr size_t s_CAPACITY = 32;
 
 		explicit BTree(Compare comp = Compare{});
 
@@ -31,7 +31,7 @@ class BTree
 
 		Value& operator[](const Key& key);
 
-		std::size_t size() const;
+		size_t size() const;
 
 		/**
 		 * Insert a key-value pair into the BTree.
@@ -46,7 +46,7 @@ class BTree
 		bool remove(const Key &key);
 
 		std::vector<std::pair<const Key*, Value*>> range(const Key &low, const Key &high);
-		std::vector<std::pair<const Key*, Value*>> range(const Key &low, std::size_t count);
+		std::vector<std::pair<const Key*, Value*>> range(const Key &low, size_t count);
 
 #ifdef BTREE_ENABLE_JSON
 		std::string serializeToJson() const;
@@ -62,7 +62,7 @@ class BTree
 	private:
 		Node* m_Root;
 		Compare m_Comp;
-		std::size_t m_Size{0};
+		size_t m_Size{0};
 
 		/**
 		 * Divides a full child node into two siblings by moving the upper half of its
@@ -74,7 +74,7 @@ class BTree
 		 * @param parent The parent of the node to split.
 		 * @param index The index in the node where to to split.
 		*/
-		void splitChild(Node* parent, std::size_t index);
+		void splitChild(Node* parent, size_t index);
 
 		/**
 		 * Inserts a key–value pair into a node that is guaranteed not to be full.
@@ -112,7 +112,7 @@ class BTree
 		 *                  and references to its children.
 		 * @param index     The index in `parent->children` where `leaf` is located.
 		*/
-		void rebalanceLeaf(Node* leaf, Node* parent, std::size_t index);
+		void rebalanceLeaf(Node* leaf, Node* parent, size_t index);
 
 		/**
 		 * Rebalances an internal node that has fallen below the minimum key threshold.
@@ -131,7 +131,7 @@ class BTree
 		 *                  and references to its children.
 		 * @param index     The index in `parent->children` where `node` is located.
 		*/
-		void rebalanceInternal(Node* node, Node* parent, std::size_t index);
+		void rebalanceInternal(Node* node, Node* parent, size_t index);
 
 		/**
 		 * Removes a key from the subtree rooted at `node`, preserving B-Tree invariants.
@@ -168,7 +168,7 @@ class BTree
 		 * @param  idx      Child index in `node->children` from which to start.
 		 * @return          The largest key in the subtree rooted at `node->children[idx]`.
 		*/
-		Key getPredecessor(Node *node, std::size_t idx) const;
+		Key getPredecessor(Node *node, size_t idx) const;
 
 		/**
 		 * Finds the in-order successor of the key at the given child index.
@@ -185,7 +185,7 @@ class BTree
 		 * @param  idx      Child index in `node->children` preceding the target subtree.
 		 * @return          The smallest key in the subtree rooted at `node->children[idx + 1]`.
 		*/
-		Key getSuccessor(Node *node, std::size_t idx) const;
+		Key getSuccessor(Node *node, size_t idx) const;
 
 		/**
 		 * Ensures that the child at index `idx` has at least the minimum number of
@@ -202,7 +202,7 @@ class BTree
 		 * @param  node     Pointer to the parent node whose child may underflow.
 		 * @param  idx      The index in `node->children` of the child to fill.
 		*/
-		void fill(Node *node, std::size_t idx);
+		void fill(Node *node, size_t idx);
 
 		/**
 		 * Borrows one key–child pair (internal nodes) or one entry (leaf nodes)
@@ -215,7 +215,7 @@ class BTree
 		 * @param  node     Pointer to the parent node whose child at `idx` is underfull.
 		 * @param  idx      Index in `node->children` of the underfull child to which the left sibling will lend.
 		*/
-		void borrowFromPrev(Node *node, std::size_t idx);
+		void borrowFromPrev(Node *node, size_t idx);
 
 		/**
 		 * Borrows one key–child pair (internal nodes) or one entry (leaf nodes)
@@ -228,7 +228,7 @@ class BTree
 		 * @param  node     Pointer to the parent node whose child at `idx` is underfull.
 		 * @param  idx      Index in `node->children` of the underfull child to which the right sibling will lend.
 		*/
-		void borrowFromNext(Node *node, std::size_t idx);
+		void borrowFromNext(Node *node, size_t idx);
 
 		/**
 		 * Merges the child at index `idx` with its adjacent sibling and removes the sibling.
@@ -245,7 +245,7 @@ class BTree
 		 * @param  idx      Index in `node->children` of the left child to merge; its
 		 *                  right sibling lives at `idx + 1`.
 		*/
-		void mergeNodes(Node *node, std::size_t idx);
+		void mergeNodes(Node *node, size_t idx);
 
 		/**
 		 * Recursively deletes the subtree rooted at `node`, freeing all allocated nodes.
