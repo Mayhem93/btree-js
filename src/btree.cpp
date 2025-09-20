@@ -644,8 +644,8 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 	// 2) In that leaf, find the first entry >= low
 	auto entryIt = std::lower_bound(
 		n->entries.begin(), n->entries.end(), low,
-		[this](auto const &entry, auto const &val) { return m_Comp(entry.first, val); }
-	);
+		[this](std::pair<Key, Value> const &entry, auto const &val)
+		{ return m_Comp(entry.first, val); });
 
 	size_t idx = std::distance(n->entries.begin(), entryIt);
 

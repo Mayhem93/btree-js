@@ -1,46 +1,33 @@
+#include <iostream>
+
 #include <node.h>
 #include <stdlib.h>
 
 #include "btree.h"
+#include "btree_wrapper.h"
 
 using namespace v8;
 
-namespace BTree {
+namespace BTreeAddon {
 
-  void BTreeWrapper (const FunctionCallbackInfo<Value>& args) {
-    Isolate* isolate = args.GetIsolate();
+  using BTreeJs = BTree<JsHandle, JsHandle, JsComparator>;
 
-    if (!args.IsConstructCall()) {
-      isolate->ThrowException(
-        Exception::TypeError(String::NewFromUtf8(
-          isolate,
-          "Cannot call constructor as function",
-          NewStringType::kNormal
-        ).ToLocalChecked())
-      );
+  inline Local<Value> toV8Number(v8::Isolate *isolate, int32_t value)
+  {
+    return Number::New(isolate, value);
+  }
 
-      return ;
-    }
-
-    // auto* tree = new BTree
+  inline Local<Value> toV8String(Isolate *isolate, const std::string &str)
+  {
+    return String::NewFromUtf8(
+               isolate,
+               str.c_str(),
+               NewStringType::kNormal)
+        .ToLocalChecked();
   }
 
   void Initialize(Local<Object> exports) {
-    Isolate *isolate = exports->GetIsolate();
-    Local<Context> ctx = isolate->GetCurrentContext();
-
-    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, BTreeWrapper);
-
-    tpl->SetClassName(String::NewFromUtf8(isolate, "BTree", NewStringType::kNormal).ToLocalChecked());
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-    Local<Function> classFunc = tpl->GetFunction(ctx).ToLocalChecked();
-
-    exports->Set(
-      ctx,
-      String::NewFromUtf8(isolate, "BTree", NewStringType::kNormal).ToLocalChecked(),
-      classFunc
-    ).Check();
+    BTreeWrapper::Init(exports);
   }
 
   NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
