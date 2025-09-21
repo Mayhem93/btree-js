@@ -10,8 +10,6 @@ using namespace v8;
 
 namespace BTreeAddon {
 
-  using BTreeJs = BTree<JsHandle, JsHandle, JsComparator>;
-
   inline Local<Value> toV8Number(v8::Isolate *isolate, int32_t value)
   {
     return Number::New(isolate, value);

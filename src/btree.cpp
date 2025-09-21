@@ -31,7 +31,7 @@ BTree<Key, Value, Compare>::Node::Node(bool leaf)
  }
 
 template<typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::BTree(Compare comp) : m_Comp(std::move(comp)), m_Size(0)
+BTree<Key, Value, Compare>::BTree(const Compare& comp) : m_Comp(std::move(comp)), m_Size(0)
 {
 	m_Root = new Node(true);
 }

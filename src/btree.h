@@ -9,14 +9,40 @@
 #include <string>
 #endif
 
+/**
+ * @class BTree
+ * @brief A templated B-Tree container for sorted key/value storage.
+ *
+ * Maintains balance by splitting and merging nodes as elements are inserted
+ * or removed, allowing efficient logarithmic-time operations.
+ *
+ * @tparam Key     Type of the keys stored in the tree.
+ * @tparam Value   Type of the values associated with each key.
+ * @tparam Compare Functor used to order keys; defaults to std::less<Key>.
+*/
 template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
 	public:
+		/**
+		 * @brief The maximum number of entries per node.
+		*/
 		static constexpr size_t s_CAPACITY = 32;
 
-		explicit BTree(Compare comp = Compare{});
+		/**
+		 * @brief Constructs an empty B-Tree with a custom comparator.
+		 *
+		 * @param comp  A callable object that returns true if a < b.
+		 * 		Defaults to `std::less<Key>`
+		 */
+		explicit BTree(const Compare& comp = Compare{});
 
+		/**
+		 * @struct Node
+		 * @brief Represents a single node in the B-Tree.
+		 *
+		 * Holds up to `BTree::s_CAPACITY` entries in a leaf.
+		 */
 		struct Node
 		{
 			bool isLeaf;
@@ -26,26 +52,89 @@ class BTree
 			Node* nextLeaf;
 			Node* prevLeaf;
 
+			/**
+			 * @brief Constructs a node.
+			 *
+			 * @param leaf  If true, this node will act as a leaf; otherwise as an internal node.
+			*/
 			explicit Node(bool leaf);
 		};
 
+		/**
+		 * @brief Accesses the value associated with a key. This does a search behind the scenes
+		 * 	so don't use it for repeated access, instead loop over the iterator and do your custom
+		 * 	logic there.
+		 *
+		 * If the key exists, returns a reference to its value. Otherwise,
+		 * an out of range exception will be thrown
+		 *
+		 * @param key  The key to locate or insert.
+		 * @return Reference to the mapped value.
+		*/
 		Value& operator[](const Key& key);
 
+		/**
+		 * @brief Returns the number of key/value pairs stored in the tree.
+		 *
+		 * This size of the B+Tree is updated during insertions and deletions and thus not computed.
+		 *
+		 * @return The number of entries in the tree.
+		*/
 		size_t size() const;
 
 		/**
-		 * Insert a key-value pair into the BTree.
-		 * @param key The key to insert.
-		 * @param value The value to insert.
-		 * @return True if the insertion was successful, false otherwise.
-		 */
+		 * @brief Inserts a key/value pair into the tree.
+		 *
+		 * If the key does not already exist, a new node is created.
+		 * If the key exists, the insertion is skipped.
+		 *
+		 * @param key     The key to insert.
+		 * @param value   The value to associate with the key.
+		 * @return true if the pair was inserted; false if the key was already present.
+		*/
 		bool insert(const Key &key, const Value &value);
 
+		/**
+		 * @brief Searches for the value associated with a given key.
+		 *
+		 * Traverses the tree to locate the node matching key.
+		 *
+		 * @param key   The key to look up.
+		 * @return Pointer to the stored value if found; nullptr if the key is not in the tree.
+		*/
 		Value* search(const Key &key) const;
 
+		/**
+		 * @brief Removes the entry with the specified key.
+		 *
+		 * Finds the node matching key, removes it, and rebalances the tree.
+		 *
+		 * @param key   The key of the entry to remove.
+		 * @return true if an element was removed; false if the key was not found.
+		*/
 		bool remove(const Key &key);
 
+		/**
+		 * @brief Collects all entries whose keys are within [low, high], inclusive.
+		 *
+		 * Performs an in-order traversal to gather matching entries in ascending key order.
+		 *
+		 * @param low   The lower bound key (inclusive).
+		 * @param high  The upper bound key (inclusive).
+		 * @return A vector of (key pointer, value pointer) pairs for matching entries.
+		*/
 		std::vector<std::pair<const Key*, Value*>> range(const Key &low, const Key &high);
+
+		/**
+		 * @brief Collects up to `count` entries starting at key ≥ low.
+		 *
+		 * Traverses the tree in order beginning at the first entry ≥ low,
+		 * gathering at most `count` results.
+		 *
+		 * @param low    The starting key (inclusive).
+		 * @param count  Maximum number of entries to return.
+		 * @return A vector of (key pointer, value pointer) pairs for the first `count` entries ≥ low.
+		*/
 		std::vector<std::pair<const Key*, Value*>> range(const Key &low, size_t count);
 
 #ifdef BTREE_ENABLE_JSON
@@ -54,9 +143,25 @@ class BTree
 		std::string serializeToJson() const { return std::string{}; }
 #endif
 		class Iterator;
+
+		/**
+		 * @brief Returns an iterator to the first (smallest) element.
+		 *
+		 * @return Iterator pointing at the minimum key.
+		*/
 		Iterator begin();
+
+		/**
+		 * @brief Returns an iterator one past the last element.
+		 *
+		 * @return End iterator.
+		*/
 		Iterator end() noexcept;
 
+		/**
+		 * @brief Destroys the B-Tree, freeing all internal nodes.
+		 *
+		*/
 		~BTree();
 
 	private:
@@ -68,9 +173,7 @@ class BTree
 		 * Divides a full child node into two siblings by moving the upper half of its
 		 * entries into a new node, promotes the median key into the parent, and links
 		 * the new sibling so the tree remains balanced.
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Comparison functor used to order keys.
+		 *
 		 * @param parent The parent of the node to split.
 		 * @param index The index in the node where to to split.
 		*/
@@ -85,9 +188,6 @@ class BTree
 		 *  - If `node` is internal, it locates the child slot, pre-splits the child
 		 *    if it’s full, and then recurses into that child.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Comparison functor used to order keys.
 		 * @param  node     Pointer to a B-Tree node that has space for at least one more entry.
 		 * @param  key      The key to insert or update.
 		 * @param  value    The value to associate with `key`.
@@ -104,9 +204,6 @@ class BTree
 		 * it merges the underfull leaf with one sibling and updates the parent’s keys
 		 * and child pointers accordingly.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree leaves.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Comparison functor used to order keys in the tree.
 		 * @param leaf      Pointer to the leaf node that needs rebalancing.
 		 * @param parent    Pointer to the parent node containing the separator key
 		 *                  and references to its children.
@@ -123,9 +220,6 @@ class BTree
 		 * pulls down the separator key from the parent, and updates the parent’s keys
 		 * and child pointers accordingly.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree internal nodes.
-		 * @tparam Value    The value type stored alongside each key in the B-Tree.
-		 * @tparam Compare  The comparison functor used to order keys in the tree.
 		 * @param node      Pointer to the internal node that needs rebalancing.
 		 * @param parent    Pointer to the parent node containing separator keys
 		 *                  and references to its children.
@@ -145,9 +239,6 @@ class BTree
 		 *    ensures that child has enough entries (borrowing or merging if underflow),
 		 *    and recurses into that child.
 		 *
-		 * @tparam Key      The type of keys stored in the tree.
-		 * @tparam Value    The type of values associated with each key.
-		 * @tparam Compare  Functor type used to order keys.
 		 * @param  node     Pointer to the node where removal begins.
 		 * @param  key      The key to remove from the tree.
 		*/
@@ -161,9 +252,6 @@ class BTree
 		 * last entry’s key. This key serves as the predecessor for
 		 * `node->keys[idx]` when replacing or deleting internal-node keys.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the internal node whose predecessor is sought.
 		 * @param  idx      Child index in `node->children` from which to start.
 		 * @return          The largest key in the subtree rooted at `node->children[idx]`.
@@ -178,9 +266,6 @@ class BTree
 		 * first entry’s key. This key serves as the successor for
 		 * `node->keys[idx]` when replacing or deleting internal-node keys.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the internal node whose successor is sought.
 		 * @param  idx      Child index in `node->children` preceding the target subtree.
 		 * @return          The smallest key in the subtree rooted at `node->children[idx + 1]`.
@@ -196,9 +281,6 @@ class BTree
 		 * the parent’s separator key. If neither sibling can lend, it merges the child
 		 * with an adjacent sibling and adjusts the parent’s keys and child pointers.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Comparison functor used to order keys in the tree.
 		 * @param  node     Pointer to the parent node whose child may underflow.
 		 * @param  idx      The index in `node->children` of the child to fill.
 		*/
@@ -209,9 +291,6 @@ class BTree
 		 * from the immediate left sibling of the child at index `idx`, updating
 		 * the parent’s separator key to restore B-Tree invariants.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the parent node whose child at `idx` is underfull.
 		 * @param  idx      Index in `node->children` of the underfull child to which the left sibling will lend.
 		*/
@@ -222,9 +301,6 @@ class BTree
 		 * from the immediate right sibling of the child at index `idx`, updating
 		 * the parent’s separator key to restore B-Tree invariants.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the parent node whose child at `idx` is underfull.
 		 * @param  idx      Index in `node->children` of the underfull child to which the right sibling will lend.
 		*/
@@ -238,9 +314,6 @@ class BTree
 		 * appends the right sibling’s keys and children to the left child, and then
 		 * removes the right sibling pointer and its key from the parent.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree nodes.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the parent node containing the two siblings.
 		 * @param  idx      Index in `node->children` of the left child to merge; its
 		 *                  right sibling lives at `idx + 1`.
@@ -254,9 +327,6 @@ class BTree
 		 * then deletes `node` itself. It is called by the destructor to teardown the
 		 * entire tree.
 		 *
-		 * @tparam Key      The key type stored in the B-Tree.
-		 * @tparam Value    The value type stored alongside each key.
-		 * @tparam Compare  Functor used to order keys in the tree.
 		 * @param  node     Pointer to the root of the subtree to destroy.
 		*/
 		void destroyNode(Node *node);

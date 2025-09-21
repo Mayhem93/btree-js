@@ -4,6 +4,7 @@
 *.pdb
 notes
 *.txt
-build/**
-out/**
-doc/**
+build/*
+out/*
+doc/*
+vcpkg_installed

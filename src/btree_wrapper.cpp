@@ -19,9 +19,7 @@ namespace BTreeAddon
 		{
 			i = other.i;
 			h.Reset();
-			h.Reset(
-				i, Local<Value>::New(i, other.h)
-			);
+			h.Reset(i, Local<Value>::New(i, other.h));
 		}
 
 		return *this;
@@ -47,7 +45,7 @@ namespace BTreeAddon
 
 	Persistent<Function, NonCopyablePersistentTraits<Function>> BTreeWrapper::s_Constructor;
 
-	BTreeWrapper::BTreeWrapper() : m_Tree(new BTreeJs()) {}
+	BTreeWrapper::BTreeWrapper() : m_Tree(std::make_unique<BTreeJs>()) {}
 
 	BTreeWrapper::~BTreeWrapper() = default;
 
