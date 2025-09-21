@@ -44,6 +44,8 @@ namespace BTreeAddon
 			static void Search(const FunctionCallbackInfo<Value>& args);
 			static void Remove(const FunctionCallbackInfo<Value>& args);
 			static void Size(const FunctionCallbackInfo<Value>& args);
+			static void Range(const FunctionCallbackInfo<Value>& args);
+			static void RangeCount(const FunctionCallbackInfo<Value>& args);
 
 			std::unique_ptr<BTreeJs> m_Tree;
 

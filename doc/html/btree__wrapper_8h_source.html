@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: src/btree_wrapper.h Source File</title>
+<title>BTreeJS: src/btree_wrapper.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,8 +26,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">My Project
+   <div id="projectname">BTreeJS
    </div>
+   <div id="projectbrief">B+Tree for Nodejs implemented with V8 API</div>
   </td>
  </tr>
  </tbody>
@@ -142,13 +143,15 @@ $(function(){initNavTree('btree__wrapper_8h_source.html','',''); });
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            <span class="keyword">static</span> <span class="keywordtype">void</span> Search(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            <span class="keyword">static</span> <span class="keywordtype">void</span> Remove(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            <span class="keyword">static</span> <span class="keywordtype">void</span> Size(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            std::unique_ptr&lt;BTreeJs&gt; m_Tree;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keyword">static</span> <span class="keywordtype">void</span> Range(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            <span class="keyword">static</span> <span class="keywordtype">void</span> RangeCount(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            <span class="keyword">static</span> Persistent&lt;Function&gt; s_Constructor;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    };</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            std::unique_ptr&lt;BTreeJs&gt; m_Tree;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keyword">static</span> Persistent&lt;Function&gt; s_Constructor;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    };</div>
 </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
 <div class="ttc" id="aclass_b_tree_html"><div class="ttname"><a href="class_b_tree.html">BTree</a></div><div class="ttdoc">A templated B-Tree container for sorted key/value storage.</div><div class="ttdef"><b>Definition</b> btree.h:25</div></div>
 <div class="ttc" id="astruct_b_tree_addon_1_1_js_comparator_html"><div class="ttname"><a href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a></div><div class="ttdef"><b>Definition</b> btree_wrapper.h:22</div></div>
 <div class="ttc" id="astruct_b_tree_addon_1_1_js_handle_html"><div class="ttname"><a href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a></div><div class="ttdef"><b>Definition</b> btree_wrapper.h:10</div></div>
