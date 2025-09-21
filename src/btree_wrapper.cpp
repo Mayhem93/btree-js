@@ -177,6 +177,83 @@ namespace BTreeAddon
 		args.GetReturnValue().Set(Number::New(isolate, static_cast<double>(size)));
 	}
 
+	void BTreeWrapper::Range(const FunctionCallbackInfo<Value>& args)
+	{
+		Isolate* isolate = args.GetIsolate();
+		Local<Context> ctx = isolate->GetCurrentContext();
+
+		if (args.Length() < 2) {
+			isolate->ThrowException(Exception::TypeError(
+				String::NewFromUtf8Literal(isolate, "range requires 2 arguments: low (number), high (number)")
+			));
+
+			return ;
+		}
+
+		BTreeWrapper* wrap = ObjectWrap::Unwrap<BTreeWrapper>(args.Holder());
+		JsHandle low(isolate, args[0]);
+		JsHandle high(isolate, args[1]);
+		auto entries = wrap->m_Tree->range(low, high);
+		Local<Map> result = Map::New(isolate);
+
+		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
+		{
+			Local<Value> key = Local<Value>::New(isolate, entry.first->h);
+			Local<Value> value = Local<Value>::New(isolate, entry.second->h);
+
+			MaybeLocal<Map> mlResult = result->Set(ctx, key, value);
+
+			if (mlResult.IsEmpty())
+			{
+				isolate->ThrowException(
+					Exception::Error(String::NewFromUtf8Literal(isolate, "Map::Set failed"))
+				);
+
+				return;
+			}
+		}
+
+		args.GetReturnValue().Set(result);
+	}
+
+	void BTreeWrapper::RangeCount(const FunctionCallbackInfo<Value> &args)
+	{
+		Isolate* isolate = args.GetIsolate();
+		Local<Context> ctx = isolate->GetCurrentContext();
+
+		if (args.Length() < 2)
+		{
+			isolate->ThrowException(Exception::TypeError(
+				String::NewFromUtf8Literal(isolate, "range requires 2 arguments: low (number), count (number)")));
+
+			return;
+		}
+
+		BTreeWrapper* wrap = ObjectWrap::Unwrap<BTreeWrapper>(args.Holder());
+		JsHandle low(isolate, args[0]);
+		size_t count = static_cast<size_t>(args[1].As<Number>()->Value());
+		auto entries = wrap->m_Tree->range(low, count);
+		Local<Map> result = Map::New(isolate);
+
+		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
+		{
+			Local<Value> key = Local<Value>::New(isolate, entry.first->h);
+			Local<Value> value = Local<Value>::New(isolate, entry.second->h);
+			MaybeLocal<Map> mlResult = result->Set(ctx, key, value);
+
+			if (mlResult.IsEmpty())
+			{
+				isolate->ThrowException(
+					Exception::Error(String::NewFromUtf8Literal(isolate, "Failed to set Map entry"))
+				);
+
+				return;
+			}
+		}
+
+		args.GetReturnValue().Set(result);
+	}
+
 	void BTreeWrapper::Init(Local<Object> exports)
 	{
 		Isolate *isolate = exports->GetIsolate();
@@ -191,6 +268,8 @@ namespace BTreeAddon
 		NODE_SET_PROTOTYPE_METHOD(tpl, "search", Search);
 		NODE_SET_PROTOTYPE_METHOD(tpl, "remove", Remove);
 		NODE_SET_PROTOTYPE_METHOD(tpl, "size", Size);
+		NODE_SET_PROTOTYPE_METHOD(tpl, "range", Range);
+		NODE_SET_PROTOTYPE_METHOD(tpl, "rangeCount", RangeCount);
 
 		s_Constructor.Reset(isolate, tpl->GetFunction(ctx).ToLocalChecked());
 
