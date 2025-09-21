@@ -797,7 +797,7 @@ std::pair<const Key &, Value &> BTree<Key, Value, Compare>::Iterator::operator*(
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::operator++()
+typename BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::operator++()
 {
 	if (!m_CurrentNode)
 	{
@@ -814,7 +814,7 @@ BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::oper
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator++(int)
+typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator++(int)
 {
 	Iterator tmp = *this;
 
@@ -824,7 +824,7 @@ BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::opera
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::operator--()
+typename BTree<Key, Value, Compare>::Iterator &BTree<Key, Value, Compare>::Iterator::operator--()
 {
 	if (!m_CurrentNode)
 	{
@@ -863,7 +863,7 @@ BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::oper
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator--(int)
+typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator--(int)
 {
 	Iterator tmp = *this;
 
@@ -885,7 +885,7 @@ bool BTree<Key, Value, Compare>::Iterator::operator!=(Iterator const &o) const
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
+typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
 {
 	Node* n = m_Root;
 
@@ -897,7 +897,7 @@ BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
 }
 
 template <typename Key, typename Value, typename Compare>
-BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::end() noexcept
+typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::end() noexcept
 {
 	return Iterator(this, nullptr, 0);
 }
