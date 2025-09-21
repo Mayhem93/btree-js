@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>BTreeJS: BTree&lt; Key, Value, Compare &gt;::Iterator&lt; Key, Value, Compare &gt; Class Template Reference</title>
+<title>BTreeJS: BTree&lt; Key, Value, Compare &gt;::Iterator Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,39 +89,46 @@ $(function(){initNavTree('class_b_tree_1_1_iterator.html','','class_b_tree_1_1_i
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">BTree&lt; Key, Value, Compare &gt;::Iterator&lt; Key, Value, Compare &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">BTree&lt; Key, Value, Compare &gt;::Iterator Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-types" class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae673d1e2684683e0f80e95a0cc285b7e" id="r_ae673d1e2684683e0f80e95a0cc285b7e"><td class="memItemLeft" align="right" valign="top"><a id="ae673d1e2684683e0f80e95a0cc285b7e" name="ae673d1e2684683e0f80e95a0cc285b7e"></a>
+<tr class="memitem:af7cf6cf83c7fb80fcddb4831f249e77c" id="r_af7cf6cf83c7fb80fcddb4831f249e77c"><td class="memItemLeft" align="right" valign="top"><a id="af7cf6cf83c7fb80fcddb4831f249e77c" name="af7cf6cf83c7fb80fcddb4831f249e77c"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>difference_type</b> = std::ptrdiff_t</td></tr>
-<tr class="memitem:aea628595a429401bd70100ba24b65445" id="r_aea628595a429401bd70100ba24b65445"><td class="memItemLeft" align="right" valign="top"><a id="aea628595a429401bd70100ba24b65445" name="aea628595a429401bd70100ba24b65445"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = std::pair&lt;const Key&amp;, Value&amp;&gt;</td></tr>
-<tr class="memitem:ae951568c925853abca95ca0ff4204bf8" id="r_ae951568c925853abca95ca0ff4204bf8"><td class="memItemLeft" align="right" valign="top"><a id="ae951568c925853abca95ca0ff4204bf8" name="ae951568c925853abca95ca0ff4204bf8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>reference</b> = value_type</td></tr>
-<tr class="memitem:a9f9a1a5acc95b1daa0685ff78870c16d" id="r_a9f9a1a5acc95b1daa0685ff78870c16d"><td class="memItemLeft" align="right" valign="top"><a id="a9f9a1a5acc95b1daa0685ff78870c16d" name="a9f9a1a5acc95b1daa0685ff78870c16d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>iterator_category</b> = std::forward_iterator_tag</td></tr>
+<tr class="memitem:a9d1af80c07b44e8587964e5e956e3728" id="r_a9d1af80c07b44e8587964e5e956e3728"><td class="memItemLeft" align="right" valign="top"><a id="a9d1af80c07b44e8587964e5e956e3728" name="a9d1af80c07b44e8587964e5e956e3728"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>iterator_category</b> = std::bidirectional_iterator_tag</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adb2d8962ec133864324fc2797b2d6f66" id="r_adb2d8962ec133864324fc2797b2d6f66"><td class="memItemLeft" align="right" valign="top"><a id="adb2d8962ec133864324fc2797b2d6f66" name="adb2d8962ec133864324fc2797b2d6f66"></a>
-reference&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> () const</td></tr>
-<tr class="memitem:a418dad3f792ba5df22414b96f9c19694" id="r_a418dad3f792ba5df22414b96f9c19694"><td class="memItemLeft" align="right" valign="top"><a id="a418dad3f792ba5df22414b96f9c19694" name="a418dad3f792ba5df22414b96f9c19694"></a>
+<tr class="memitem:a526eb5d657cb27df66f82c03d8efd4cc" id="r_a526eb5d657cb27df66f82c03d8efd4cc"><td class="memItemLeft" align="right" valign="top"><a id="a526eb5d657cb27df66f82c03d8efd4cc" name="a526eb5d657cb27df66f82c03d8efd4cc"></a>
+std::pair&lt; const Key &amp;, Value &amp; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> () const</td></tr>
+<tr class="memitem:af8aa7317fd74951bbca54630e16b8c3a" id="r_af8aa7317fd74951bbca54630e16b8c3a"><td class="memItemLeft" align="right" valign="top"><a id="af8aa7317fd74951bbca54630e16b8c3a" name="af8aa7317fd74951bbca54630e16b8c3a"></a>
 <a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator++</b> ()</td></tr>
-<tr class="memitem:aaa5a2dfe64462c1c35ff1c7fe16aad43" id="r_aaa5a2dfe64462c1c35ff1c7fe16aad43"><td class="memItemLeft" align="right" valign="top"><a id="aaa5a2dfe64462c1c35ff1c7fe16aad43" name="aaa5a2dfe64462c1c35ff1c7fe16aad43"></a>
+<tr class="memitem:ad7484b4b9e33f0718e329f2629373649" id="r_ad7484b4b9e33f0718e329f2629373649"><td class="memItemLeft" align="right" valign="top"><a id="ad7484b4b9e33f0718e329f2629373649" name="ad7484b4b9e33f0718e329f2629373649"></a>
 <a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator++</b> (int)</td></tr>
-<tr class="memitem:aaf02ef5d61c652e6c8afd7a0ff0979ac" id="r_aaf02ef5d61c652e6c8afd7a0ff0979ac"><td class="memItemLeft" align="right" valign="top"><a id="aaf02ef5d61c652e6c8afd7a0ff0979ac" name="aaf02ef5d61c652e6c8afd7a0ff0979ac"></a>
+<tr class="memitem:a145609af6cb764f68668a3b658e2a0a7" id="r_a145609af6cb764f68668a3b658e2a0a7"><td class="memItemLeft" align="right" valign="top"><a id="a145609af6cb764f68668a3b658e2a0a7" name="a145609af6cb764f68668a3b658e2a0a7"></a>
+<a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator--</b> ()</td></tr>
+<tr class="memitem:a29f331b667a86401188cb2c3022801f0" id="r_a29f331b667a86401188cb2c3022801f0"><td class="memItemLeft" align="right" valign="top"><a id="a29f331b667a86401188cb2c3022801f0" name="a29f331b667a86401188cb2c3022801f0"></a>
+<a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator--</b> (int)</td></tr>
+<tr class="memitem:a2e89185967f09857f61a7c5652d28f84" id="r_a2e89185967f09857f61a7c5652d28f84"><td class="memItemLeft" align="right" valign="top"><a id="a2e89185967f09857f61a7c5652d28f84" name="a2e89185967f09857f61a7c5652d28f84"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (<a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a> const &amp;o) const</td></tr>
-<tr class="memitem:ad71bb4a24e5c7fccceab9e92fd8ab2b3" id="r_ad71bb4a24e5c7fccceab9e92fd8ab2b3"><td class="memItemLeft" align="right" valign="top"><a id="ad71bb4a24e5c7fccceab9e92fd8ab2b3" name="ad71bb4a24e5c7fccceab9e92fd8ab2b3"></a>
+<tr class="memitem:a9d575ed6cafd4c889796bde9af88ea5e" id="r_a9d575ed6cafd4c889796bde9af88ea5e"><td class="memItemLeft" align="right" valign="top"><a id="a9d575ed6cafd4c889796bde9af88ea5e" name="a9d575ed6cafd4c889796bde9af88ea5e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (<a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a> const &amp;o) const</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ac61107b48ccc3979a1000a9374a7ad1e" id="r_ac61107b48ccc3979a1000a9374a7ad1e"><td class="memItemLeft" align="right" valign="top"><a id="ac61107b48ccc3979a1000a9374a7ad1e" name="ac61107b48ccc3979a1000a9374a7ad1e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Iterator</b> (<a class="el" href="class_b_tree.html">BTree</a> *tree, <a class="el" href="struct_b_tree_1_1_node.html">Node</a> *node, size_t index) noexcept</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-attribs" class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ad2ec2341756f595505eb0f457da452ec" id="r_ad2ec2341756f595505eb0f457da452ec"><td class="memItemLeft" align="right" valign="top"><a id="ad2ec2341756f595505eb0f457da452ec" name="ad2ec2341756f595505eb0f457da452ec"></a>
+<tr class="memitem:a4c651b866c20c2577b82ef679ca813c4" id="r_a4c651b866c20c2577b82ef679ca813c4"><td class="memItemLeft" align="right" valign="top"><a id="a4c651b866c20c2577b82ef679ca813c4" name="a4c651b866c20c2577b82ef679ca813c4"></a>
+<a class="el" href="class_b_tree.html">BTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_Tree</b></td></tr>
+<tr class="memitem:a0dd597a94976e3b58a5473c28711d91b" id="r_a0dd597a94976e3b58a5473c28711d91b"><td class="memItemLeft" align="right" valign="top"><a id="a0dd597a94976e3b58a5473c28711d91b" name="a0dd597a94976e3b58a5473c28711d91b"></a>
 <a class="el" href="struct_b_tree_1_1_node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_CurrentNode</b></td></tr>
-<tr class="memitem:acc12b94d44cd0252c6988241019a74b6" id="r_acc12b94d44cd0252c6988241019a74b6"><td class="memItemLeft" align="right" valign="top"><a id="acc12b94d44cd0252c6988241019a74b6" name="acc12b94d44cd0252c6988241019a74b6"></a>
+<tr class="memitem:ab0406a403e4348a8a804c4e83f89edae" id="r_ab0406a403e4348a8a804c4e83f89edae"><td class="memItemLeft" align="right" valign="top"><a id="ab0406a403e4348a8a804c4e83f89edae" name="ab0406a403e4348a8a804c4e83f89edae"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_CurrentIndex</b></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
@@ -129,7 +136,8 @@ Friends</h2></td></tr>
 <tr class="memitem:afe7ca3b05721d3baaafb993caf9d1bbc" id="r_afe7ca3b05721d3baaafb993caf9d1bbc"><td class="memItemLeft" align="right" valign="top"><a id="afe7ca3b05721d3baaafb993caf9d1bbc" name="afe7ca3b05721d3baaafb993caf9d1bbc"></a>
 class&#160;</td><td class="memItemRight" valign="bottom"><b>BTree</b></td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/<a class="el" href="btree_8h_source.html">btree.h</a></li>
 <li>src/<a class="el" href="btree_8cpp_source.html">btree.cpp</a></li>
 </ul>
 </div><!-- contents -->

@@ -142,13 +142,39 @@ class BTree
 #else
 		std::string serializeToJson() const { return std::string{}; }
 #endif
-		class Iterator;
+		class Iterator
+		{
+			public:
+				using difference_type = std::ptrdiff_t;
+				using iterator_category = std::bidirectional_iterator_tag;
+
+				Iterator() noexcept;
+				std::pair<const Key&, Value&> operator*() const;
+				Iterator& operator++ ();
+				Iterator operator++ (int);
+				Iterator& operator-- ();
+				Iterator operator-- (int);
+				bool operator== (Iterator const &o) const;
+				bool operator!= (Iterator const &o) const;
+
+			private:
+				BTree* m_Tree;
+				Node* m_CurrentNode;
+				size_t m_CurrentIndex;
+
+				Iterator(BTree *tree, Node *node, size_t index) noexcept;
+
+			friend class BTree;
+		};
 
 		/**
 		 * @brief Returns an iterator to the first (smallest) element.
 		 *
+		 * Starts a forward in-order traversal of the B+Tree,
+		 * yielding entries from low keys to high.
+		 *
 		 * @return Iterator pointing at the minimum key.
-		*/
+		 */
 		Iterator begin();
 
 		/**
@@ -157,6 +183,25 @@ class BTree
 		 * @return End iterator.
 		*/
 		Iterator end() noexcept;
+
+		/**
+		 * @brief Returns a reverse iterator to the last (largest) element.
+		 *
+		 * Starts a reverse in-order traversal of the B+Tree,
+		 * yielding entries from high keys down to low.
+		 *
+		 * @return A std::reverse_iterator over Iterator, initially pointing at the maximum key.
+		*/
+		std::reverse_iterator<Iterator> rbegin();
+
+		/**
+		 * @brief Returns a reverse iterator one past the first (smallest) element.
+		 *
+		 * This marks the end of a reverse in-order traversal.
+		 *
+		 * @return A std::reverse_iterator over Iterator at the rend position.
+		 */
+		std::reverse_iterator<Iterator> rend() noexcept;
 
 		/**
 		 * @brief Destroys the B-Tree, freeing all internal nodes.

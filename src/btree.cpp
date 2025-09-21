@@ -777,76 +777,139 @@ std::string BTree<Key, Value, Compare>::serializeToJson() const
 #endif
 
 template <typename Key, typename Value, typename Compare>
-class BTree<Key, Value, Compare>::Iterator {
-	public:
-		using difference_type = std::ptrdiff_t;
-		using value_type = std::pair<const Key&, Value&>;
-		using reference = value_type;
-		using iterator_category = std::forward_iterator_tag;
-
-		Iterator() noexcept : m_CurrentNode(nullptr), m_CurrentIndex(0) {}
-
-		reference operator* () const {
-			auto &kv = m_CurrentNode->entries[m_CurrentIndex];
-
-			return { kv.first, kv.second };
-		}
-
-		Iterator& operator++ () {
-			if (!m_CurrentNode) {
-				return *this;
-			}
-
-			if (++m_CurrentIndex >= m_CurrentNode->entries.size()) {
-				m_CurrentNode = m_CurrentNode->nextLeaf;
-				m_CurrentIndex = 0;
-			}
-
-			return *this;
-		}
-
-		Iterator operator++ (int) {
-			Iterator tmp = *this;
-
-			++*this;
-
-			return tmp;
-		}
-
-		bool operator== (Iterator const& o) const {
-			return m_CurrentNode == o.m_CurrentNode && m_CurrentIndex == o.m_CurrentIndex;
-		}
-
-		bool operator!= (Iterator const& o) const {
-			return !(*this == o);
-		}
-
-	private:
-		Node* m_CurrentNode;
-		size_t m_CurrentIndex;
-
-		friend class BTree;
-};
+BTree<Key, Value, Compare>::Iterator::Iterator() noexcept :
+	m_Tree(nullptr),
+	m_CurrentNode(nullptr),
+	m_CurrentIndex(0) {}
 
 template <typename Key, typename Value, typename Compare>
-typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
+BTree<Key, Value, Compare>::Iterator::Iterator(BTree *tree, Node *node, size_t index) noexcept :
+	m_Tree(tree),
+	m_CurrentNode(node),
+	m_CurrentIndex(index) {}
+
+template <typename Key, typename Value, typename Compare>
+std::pair<const Key &, Value &> BTree<Key, Value, Compare>::Iterator::operator*() const
 {
-	Iterator it;
+	auto &kv = m_CurrentNode->entries[m_CurrentIndex];
+
+	return { kv.first, kv.second };
+}
+
+template <typename Key, typename Value, typename Compare>
+BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::operator++()
+{
+	if (!m_CurrentNode)
+	{
+		return *this;
+	}
+
+	if (++m_CurrentIndex >= m_CurrentNode->entries.size())
+	{
+		m_CurrentNode = m_CurrentNode->nextLeaf;
+		m_CurrentIndex = 0;
+	}
+
+	return *this;
+}
+
+template <typename Key, typename Value, typename Compare>
+BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator++(int)
+{
+	Iterator tmp = *this;
+
+	++*this;
+
+	return tmp;
+}
+
+template <typename Key, typename Value, typename Compare>
+BTree<Key, Value, Compare>::Iterator& BTree<Key, Value, Compare>::Iterator::operator--()
+{
+	if (!m_CurrentNode)
+	{
+		Node *n = m_Tree->m_Root;
+
+		while (n && !n->isLeaf)
+		{
+			n = n->children.back();
+
+		}
+
+		if (n && !n->entries.empty())
+		{
+			m_CurrentNode = n;
+			m_CurrentIndex = n->entries.size() - 1;
+		}
+
+		return *this;
+	}
+
+	// still in a leaf: back up index
+	if (m_CurrentIndex > 0)
+	{
+		--m_CurrentIndex;
+
+		return *this;
+	}
+
+	// at index 0, hop to previous leaf
+	Node *prev = m_CurrentNode->prevLeaf;
+
+	m_CurrentNode = prev;
+	m_CurrentIndex = prev ? prev->entries.size() - 1 : 0;
+
+	return *this;
+}
+
+template <typename Key, typename Value, typename Compare>
+BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::Iterator::operator--(int)
+{
+	Iterator tmp = *this;
+
+	--*this;
+
+	return tmp;
+}
+
+template <typename Key, typename Value, typename Compare>
+bool BTree<Key, Value, Compare>::Iterator::operator==(Iterator const &o) const
+{
+	return m_CurrentNode == o.m_CurrentNode && m_CurrentIndex == o.m_CurrentIndex;
+}
+
+template <typename Key, typename Value, typename Compare>
+bool BTree<Key, Value, Compare>::Iterator::operator!=(Iterator const &o) const
+{
+	return !(*this == o);
+}
+
+template <typename Key, typename Value, typename Compare>
+BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::begin()
+{
 	Node* n = m_Root;
 
 	while (n && !n->isLeaf) {
 		n = n->children.front();
 	}
 
-	it.m_CurrentNode = n;
-	it.m_CurrentIndex = 0;
-
-	return it;
+	return Iterator(this, n, 0);
 }
 
 template <typename Key, typename Value, typename Compare>
-typename BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::end() noexcept
+BTree<Key, Value, Compare>::Iterator BTree<Key, Value, Compare>::end() noexcept
 {
-	return Iterator();
+	return Iterator(this, nullptr, 0);
 }
 
+template <typename Key, typename Value, typename Compare>
+auto BTree<Key, Value, Compare>::rbegin() -> std::reverse_iterator<BTree<Key, Value, Compare>::Iterator>
+{
+	return std::reverse_iterator<BTree<Key, Value, Compare>::Iterator>(end());
+}
+
+template <typename Key, typename Value, typename Compare>
+auto BTree<Key, Value, Compare>::rend() noexcept -> std::reverse_iterator<BTree<Key, Value, Compare>::Iterator>
+{
+	return std::reverse_iterator<BTree<Key, Value, Compare>::Iterator>(begin());
+}

@@ -916,92 +916,157 @@ $(function(){initNavTree('btree_8cpp_source.html','',''); });
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span> </div>
 <div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
-<div class="foldopen" id="foldopen00780" data-start="{" data-end="};">
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno"><a class="line" href="class_b_tree_1_1_iterator.html">  780</a></span><span class="keyword">class </span>BTree&lt;Key, Value, Compare&gt;::Iterator {</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        <span class="keyword">using </span>difference_type = std::ptrdiff_t;</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        <span class="keyword">using </span>value_type = std::pair&lt;const Key&amp;, Value&amp;&gt;;</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keyword">using </span>reference = value_type;</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        <span class="keyword">using </span>iterator_category = std::forward_iterator_tag;</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span> </div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>        Iterator() noexcept : m_CurrentNode(<span class="keyword">nullptr</span>), m_CurrentIndex(0) {}</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span> </div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        reference operator* ()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            <span class="keyword">auto</span> &amp;kv = m_CurrentNode-&gt;entries[m_CurrentIndex];</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span> </div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>            <span class="keywordflow">return</span> { kv.first, kv.second };</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        }</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span> </div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>        Iterator&amp; operator++ () {</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            <span class="keywordflow">if</span> (!m_CurrentNode) {</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>                <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>            }</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span> </div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>            <span class="keywordflow">if</span> (++m_CurrentIndex &gt;= m_CurrentNode-&gt;entries.size()) {</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                m_CurrentNode = m_CurrentNode-&gt;nextLeaf;</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>                m_CurrentIndex = 0;</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>            }</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>        }</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>        Iterator operator++ (<span class="keywordtype">int</span>) {</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>            Iterator tmp = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span> </div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>            ++*<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>BTree&lt;Key, Value, Compare&gt;::Iterator::Iterator() noexcept :</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    m_Tree(<span class="keywordtype">nullptr</span>),</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    m_CurrentNode(<span class="keywordtype">nullptr</span>),</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    m_CurrentIndex(0) {}</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::Iterator</a>(<a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree</a> *tree, <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a> *node, <span class="keywordtype">size_t</span> index) noexcept :</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    m_Tree(tree),</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>    m_CurrentNode(node),</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>    m_CurrentIndex(index) {}</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span> </div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>std::pair&lt;const Key &amp;, Value &amp;&gt; <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator*</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    <span class="keyword">auto</span> &amp;kv = m_CurrentNode-&gt;entries[m_CurrentIndex];</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span> </div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    <span class="keywordflow">return</span> { kv.first, kv.second };</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>}</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span> </div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator</a>&amp; <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator++</a>()</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>{</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    <span class="keywordflow">if</span> (!m_CurrentNode)</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    {</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    }</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span> </div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>    <span class="keywordflow">if</span> (++m_CurrentIndex &gt;= m_CurrentNode-&gt;entries.size())</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>    {</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        m_CurrentNode = m_CurrentNode-&gt;nextLeaf;</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>        m_CurrentIndex = 0;</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>    }</div>
 <div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span> </div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>            <span class="keywordflow">return</span> tmp;</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        }</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>}</div>
 <div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span> </div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>        <span class="keywordtype">bool</span> operator== (Iterator <span class="keyword">const</span>&amp; o)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>            <span class="keywordflow">return</span> m_CurrentNode == o.m_CurrentNode &amp;&amp; m_CurrentIndex == o.m_CurrentIndex;</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        }</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span> </div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        <span class="keywordtype">bool</span> operator!= (Iterator <span class="keyword">const</span>&amp; o)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>            <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == o);</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>        }</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span> </div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a>* m_CurrentNode;</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        <span class="keywordtype">size_t</span> m_CurrentIndex;</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span> </div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        <span class="keyword">friend</span> <span class="keyword">class </span>BTree;</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>};</div>
-</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
-<div class="foldopen" id="foldopen00832" data-start="{" data-end="}">
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno"><a class="line" href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">  832</a></span><span class="keyword">typename</span> <a class="code hl_class" href="class_b_tree_1_1_iterator.html">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">BTree&lt;Key, Value, Compare&gt;::begin</a>()</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>{</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a> it;</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a>* n = m_Root;</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span><a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator++</a>(<span class="keywordtype">int</span>)</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>{</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a> tmp = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    ++*<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span> </div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>}</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span> </div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator</a>&amp; <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator--</a>()</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>{</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    <span class="keywordflow">if</span> (!m_CurrentNode)</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>    {</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a> *n = m_Tree-&gt;m_Root;</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span> </div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        <span class="keywordflow">while</span> (n &amp;&amp; !n-&gt;isLeaf)</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        {</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>            n = n-&gt;children.back();</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    <span class="keywordflow">while</span> (n &amp;&amp; !n-&gt;isLeaf) {</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        n = n-&gt;children.front();</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>    }</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span> </div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>    it.m_CurrentNode = n;</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>    it.m_CurrentIndex = 0;</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span> </div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>    <span class="keywordflow">return</span> it;</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>}</div>
-</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
-<div class="foldopen" id="foldopen00848" data-start="{" data-end="}">
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno"><a class="line" href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">  848</a></span><span class="keyword">typename</span> <a class="code hl_class" href="class_b_tree_1_1_iterator.html">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">BTree&lt;Key, Value, Compare&gt;::end</a>() noexcept</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>{</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a>();</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>}</div>
-</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>        }</div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span> </div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        <span class="keywordflow">if</span> (n &amp;&amp; !n-&gt;entries.empty())</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>        {</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>            m_CurrentNode = n;</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            m_CurrentIndex = n-&gt;entries.size() - 1;</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        }</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>    }</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span> </div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>    <span class="comment">// still in a leaf: back up index</span></div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>    <span class="keywordflow">if</span> (m_CurrentIndex &gt; 0)</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>    {</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>        --m_CurrentIndex;</div>
 <div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>    }</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span> </div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    <span class="comment">// at index 0, hop to previous leaf</span></div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a> *prev = m_CurrentNode-&gt;prevLeaf;</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    m_CurrentNode = prev;</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    m_CurrentIndex = prev ? prev-&gt;entries.size() - 1 : 0;</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span> </div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>}</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span> </div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span><a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator--</a>(<span class="keywordtype">int</span>)</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>{</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a> tmp = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span> </div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    --*<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span> </div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>}</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span> </div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="keywordtype">bool</span> <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator==</a>(<a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a> <span class="keyword">const</span> &amp;o)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>    <span class="keywordflow">return</span> m_CurrentNode == o.m_CurrentNode &amp;&amp; m_CurrentIndex == o.m_CurrentIndex;</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>}</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span> </div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="keywordtype">bool</span> <a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree&lt;Key, Value, Compare&gt;::Iterator::operator!=</a>(<a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a> <span class="keyword">const</span> &amp;o)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>    <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == o);</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>}</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span> </div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="foldopen" id="foldopen00888" data-start="{" data-end="}">
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno"><a class="line" href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">  888</a></span><a class="code hl_class" href="class_b_tree_1_1_iterator.html">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">BTree&lt;Key, Value, Compare&gt;::begin</a>()</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>{</div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    <a class="code hl_struct" href="struct_b_tree_1_1_node.html">Node</a>* n = m_Root;</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span> </div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>    <span class="keywordflow">while</span> (n &amp;&amp; !n-&gt;isLeaf) {</div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>        n = n-&gt;children.front();</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>    }</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span> </div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a>(<span class="keyword">this</span>, n, 0);</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>}</div>
 </div>
-<div class="ttc" id="aclass_b_tree_1_1_iterator_html"><div class="ttname"><a href="class_b_tree_1_1_iterator.html">BTree::Iterator</a></div><div class="ttdef"><b>Definition</b> btree.cpp:780</div></div>
-<div class="ttc" id="aclass_b_tree_html_a0346e361fbb10fa5827c8c00a9cea2e1"><div class="ttname"><a href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">BTree::end</a></div><div class="ttdeci">Iterator end() noexcept</div><div class="ttdoc">Returns an iterator one past the last element.</div><div class="ttdef"><b>Definition</b> btree.cpp:848</div></div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span> </div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="foldopen" id="foldopen00900" data-start="{" data-end="}">
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno"><a class="line" href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">  900</a></span><a class="code hl_class" href="class_b_tree_1_1_iterator.html">BTree&lt;Key, Value, Compare&gt;::Iterator</a> <a class="code hl_function" href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">BTree&lt;Key, Value, Compare&gt;::end</a>() noexcept</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>{</div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a>(<span class="keyword">this</span>, <span class="keyword">nullptr</span>, 0);</div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>}</div>
+</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span> </div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="foldopen" id="foldopen00906" data-start="{" data-end="}">
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno"><a class="line" href="class_b_tree.html#aa50d6c9e08298d36f086cbc582e8241d">  906</a></span><span class="keyword">auto</span> <a class="code hl_function" href="class_b_tree.html#aa50d6c9e08298d36f086cbc582e8241d">BTree&lt;Key, Value, Compare&gt;::rbegin</a>() -&gt; std::reverse_iterator&lt;BTree&lt;Key, Value, Compare&gt;::Iterator&gt;</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>{</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    <span class="keywordflow">return</span> std::reverse_iterator&lt;BTree&lt;Key, Value, Compare&gt;::Iterator&gt;(<a class="code hl_function" href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">end</a>());</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>}</div>
+</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span> </div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Key, <span class="keyword">typename</span> Value, <span class="keyword">typename</span> Compare&gt;</div>
+<div class="foldopen" id="foldopen00912" data-start="{" data-end="}">
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno"><a class="line" href="class_b_tree.html#ac6b60d197dd19c852555521973110479">  912</a></span><span class="keyword">auto</span> <a class="code hl_function" href="class_b_tree.html#ac6b60d197dd19c852555521973110479">BTree&lt;Key, Value, Compare&gt;::rend</a>() noexcept -&gt; std::reverse_iterator&lt;<a class="code hl_function" href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree</a>&lt;Key, Value, Compare&gt;::<a class="code hl_class" href="class_b_tree_1_1_iterator.html">Iterator</a>&gt;</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>{</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>    <span class="keywordflow">return</span> std::reverse_iterator&lt;BTree&lt;Key, Value, Compare&gt;::Iterator&gt;(<a class="code hl_function" href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">begin</a>());</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>}</div>
+</div>
+</div>
+<div class="ttc" id="aclass_b_tree_1_1_iterator_html"><div class="ttname"><a href="class_b_tree_1_1_iterator.html">BTree::Iterator</a></div><div class="ttdef"><b>Definition</b> btree.h:146</div></div>
+<div class="ttc" id="aclass_b_tree_html_a0346e361fbb10fa5827c8c00a9cea2e1"><div class="ttname"><a href="class_b_tree.html#a0346e361fbb10fa5827c8c00a9cea2e1">BTree::end</a></div><div class="ttdeci">Iterator end() noexcept</div><div class="ttdoc">Returns an iterator one past the last element.</div><div class="ttdef"><b>Definition</b> btree.cpp:900</div></div>
 <div class="ttc" id="aclass_b_tree_html_a0a0989a366b92907a8389360532e201b"><div class="ttname"><a href="class_b_tree.html#a0a0989a366b92907a8389360532e201b">BTree::remove</a></div><div class="ttdeci">bool remove(const Key &amp;key)</div><div class="ttdoc">Removes the entry with the specified key.</div><div class="ttdef"><b>Definition</b> btree.cpp:226</div></div>
-<div class="ttc" id="aclass_b_tree_html_a150e650122b9926ad7bcfcacda0046d8"><div class="ttname"><a href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">BTree::begin</a></div><div class="ttdeci">Iterator begin()</div><div class="ttdoc">Returns an iterator to the first (smallest) element.</div><div class="ttdef"><b>Definition</b> btree.cpp:832</div></div>
+<div class="ttc" id="aclass_b_tree_html_a150e650122b9926ad7bcfcacda0046d8"><div class="ttname"><a href="class_b_tree.html#a150e650122b9926ad7bcfcacda0046d8">BTree::begin</a></div><div class="ttdeci">Iterator begin()</div><div class="ttdoc">Returns an iterator to the first (smallest) element.</div><div class="ttdef"><b>Definition</b> btree.cpp:888</div></div>
 <div class="ttc" id="aclass_b_tree_html_a1f618d0a26ec20a12ad3b05e06c78970"><div class="ttname"><a href="class_b_tree.html#a1f618d0a26ec20a12ad3b05e06c78970">BTree::insert</a></div><div class="ttdeci">bool insert(const Key &amp;key, const Value &amp;value)</div><div class="ttdoc">Inserts a key/value pair into the tree.</div><div class="ttdef"><b>Definition</b> btree.cpp:172</div></div>
-<div class="ttc" id="aclass_b_tree_html_a2f8fc0b0f01e1839ceddd94b278d05ae"><div class="ttname"><a href="class_b_tree.html#a2f8fc0b0f01e1839ceddd94b278d05ae">BTree::less</a></div><div class="ttdeci">bool less(const Key &amp;a, const Key &amp;b) const</div><div class="ttdef"><b>Definition</b> btree.h:340</div></div>
+<div class="ttc" id="aclass_b_tree_html_a2f8fc0b0f01e1839ceddd94b278d05ae"><div class="ttname"><a href="class_b_tree.html#a2f8fc0b0f01e1839ceddd94b278d05ae">BTree::less</a></div><div class="ttdeci">bool less(const Key &amp;a, const Key &amp;b) const</div><div class="ttdef"><b>Definition</b> btree.h:385</div></div>
 <div class="ttc" id="aclass_b_tree_html_a391b01dbf324db440cc17a77e631a064"><div class="ttname"><a href="class_b_tree.html#a391b01dbf324db440cc17a77e631a064">BTree::fill</a></div><div class="ttdeci">void fill(Node *node, size_t idx)</div><div class="ttdef"><b>Definition</b> btree.cpp:272</div></div>
 <div class="ttc" id="aclass_b_tree_html_a4a1d1d6517f181018efa489d009d0fcc"><div class="ttname"><a href="class_b_tree.html#a4a1d1d6517f181018efa489d009d0fcc">BTree::size</a></div><div class="ttdeci">size_t size() const</div><div class="ttdoc">Returns the number of key/value pairs stored in the tree.</div><div class="ttdef"><b>Definition</b> btree.cpp:56</div></div>
 <div class="ttc" id="aclass_b_tree_html_a4faf55ac6eafe3249ecfea528e2b6940"><div class="ttname"><a href="class_b_tree.html#a4faf55ac6eafe3249ecfea528e2b6940">BTree::removeFromNode</a></div><div class="ttdeci">void removeFromNode(Node *node, const Key &amp;key)</div><div class="ttdef"><b>Definition</b> btree.cpp:407</div></div>
@@ -1014,9 +1079,11 @@ $(function(){initNavTree('btree_8cpp_source.html','',''); });
 <div class="ttc" id="aclass_b_tree_html_a7dd69dade4718a185d457a71d855b517"><div class="ttname"><a href="class_b_tree.html#a7dd69dade4718a185d457a71d855b517">BTree::range</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; const Key *, Value * &gt; &gt; range(const Key &amp;low, const Key &amp;high)</div><div class="ttdoc">Collects all entries whose keys are within [low, high], inclusive.</div><div class="ttdef"><b>Definition</b> btree.cpp:624</div></div>
 <div class="ttc" id="aclass_b_tree_html_a8db0d5ceac0ac47ed3a22ad5ea7b1d94"><div class="ttname"><a href="class_b_tree.html#a8db0d5ceac0ac47ed3a22ad5ea7b1d94">BTree::borrowFromPrev</a></div><div class="ttdeci">void borrowFromPrev(Node *node, size_t idx)</div><div class="ttdef"><b>Definition</b> btree.cpp:301</div></div>
 <div class="ttc" id="aclass_b_tree_html_aa466823af040ada3f5a56574e337a526"><div class="ttname"><a href="class_b_tree.html#aa466823af040ada3f5a56574e337a526">BTree::s_CAPACITY</a></div><div class="ttdeci">static constexpr size_t s_CAPACITY</div><div class="ttdoc">The maximum number of entries per node.</div><div class="ttdef"><b>Definition</b> btree.h:30</div></div>
+<div class="ttc" id="aclass_b_tree_html_aa50d6c9e08298d36f086cbc582e8241d"><div class="ttname"><a href="class_b_tree.html#aa50d6c9e08298d36f086cbc582e8241d">BTree::rbegin</a></div><div class="ttdeci">std::reverse_iterator&lt; Iterator &gt; rbegin()</div><div class="ttdoc">Returns a reverse iterator to the last (largest) element.</div><div class="ttdef"><b>Definition</b> btree.cpp:906</div></div>
 <div class="ttc" id="aclass_b_tree_html_aa53d01b3c5039553df1f1fbe6afbf337"><div class="ttname"><a href="class_b_tree.html#aa53d01b3c5039553df1f1fbe6afbf337">BTree::getPredecessor</a></div><div class="ttdeci">Key getPredecessor(Node *node, size_t idx) const</div><div class="ttdef"><b>Definition</b> btree.cpp:248</div></div>
 <div class="ttc" id="aclass_b_tree_html_aa8547724653e13afd62e9f2ef384ff2a"><div class="ttname"><a href="class_b_tree.html#aa8547724653e13afd62e9f2ef384ff2a">BTree::borrowFromNext</a></div><div class="ttdeci">void borrowFromNext(Node *node, size_t idx)</div><div class="ttdef"><b>Definition</b> btree.cpp:335</div></div>
 <div class="ttc" id="aclass_b_tree_html_aac69f678bcb722552d0123503594b08d"><div class="ttname"><a href="class_b_tree.html#aac69f678bcb722552d0123503594b08d">BTree::mergeNodes</a></div><div class="ttdeci">void mergeNodes(Node *node, size_t idx)</div><div class="ttdef"><b>Definition</b> btree.cpp:361</div></div>
+<div class="ttc" id="aclass_b_tree_html_ac6b60d197dd19c852555521973110479"><div class="ttname"><a href="class_b_tree.html#ac6b60d197dd19c852555521973110479">BTree::rend</a></div><div class="ttdeci">std::reverse_iterator&lt; Iterator &gt; rend() noexcept</div><div class="ttdoc">Returns a reverse iterator one past the first (smallest) element.</div><div class="ttdef"><b>Definition</b> btree.cpp:912</div></div>
 <div class="ttc" id="aclass_b_tree_html_ac7841baccc584bd46c5ddbaa269c7c69"><div class="ttname"><a href="class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69">BTree::BTree</a></div><div class="ttdeci">BTree(const Compare &amp;comp=Compare{})</div><div class="ttdoc">Constructs an empty B-Tree with a custom comparator.</div><div class="ttdef"><b>Definition</b> btree.cpp:34</div></div>
 <div class="ttc" id="aclass_b_tree_html_acf3b2d3f85cd319dd01dbffc970614c7"><div class="ttname"><a href="class_b_tree.html#acf3b2d3f85cd319dd01dbffc970614c7">BTree::getSuccessor</a></div><div class="ttdeci">Key getSuccessor(Node *node, size_t idx) const</div><div class="ttdef"><b>Definition</b> btree.cpp:260</div></div>
 <div class="ttc" id="aclass_b_tree_html_adfb513daae74e467d51c9bf88af2596a"><div class="ttname"><a href="class_b_tree.html#adfb513daae74e467d51c9bf88af2596a">BTree::operator[]</a></div><div class="ttdeci">Value &amp; operator[](const Key &amp;key)</div><div class="ttdoc">Accesses the value associated with a key. This does a search behind the scenes so don&#39;t use it for re...</div><div class="ttdef"><b>Definition</b> btree.cpp:46</div></div>

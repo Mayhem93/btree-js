@@ -200,7 +200,6 @@ namespace BTreeAddon
 		{
 			Local<Value> key = Local<Value>::New(isolate, entry.first->h);
 			Local<Value> value = Local<Value>::New(isolate, entry.second->h);
-
 			MaybeLocal<Map> mlResult = result->Set(ctx, key, value);
 
 			if (mlResult.IsEmpty())

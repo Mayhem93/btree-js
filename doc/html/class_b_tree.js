@@ -19,10 +19,12 @@ var class_b_tree =
     [ "operator[]", "class_b_tree.html#adfb513daae74e467d51c9bf88af2596a", null ],
     [ "range", "class_b_tree.html#a7dd69dade4718a185d457a71d855b517", null ],
     [ "range", "class_b_tree.html#a50a547458b425a5d3edbf31cbe6d350e", null ],
+    [ "rbegin", "class_b_tree.html#aa50d6c9e08298d36f086cbc582e8241d", null ],
     [ "rebalanceInternal", "class_b_tree.html#af95c5741c674dc4532336c0adab4ea3a", null ],
     [ "rebalanceLeaf", "class_b_tree.html#a6a530f1aca4a6ab8d2009ea5e3dde846", null ],
     [ "remove", "class_b_tree.html#a0a0989a366b92907a8389360532e201b", null ],
     [ "removeFromNode", "class_b_tree.html#a4faf55ac6eafe3249ecfea528e2b6940", null ],
+    [ "rend", "class_b_tree.html#ac6b60d197dd19c852555521973110479", null ],
     [ "search", "class_b_tree.html#a6ac491a77f862fa00a94cf7a688d7e48", null ],
     [ "size", "class_b_tree.html#a4a1d1d6517f181018efa489d009d0fcc", null ],
     [ "splitChild", "class_b_tree.html#a644946dc5c2b58a1c7ddf8d52fa1b2e8", null ]
