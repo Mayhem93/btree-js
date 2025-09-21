@@ -1,0 +1,71 @@
+\doxysection{BTree\texorpdfstring{$<$}{<} Key, Value, Compare \texorpdfstring{$>$}{>}\+::Node Struct Reference}
+\hypertarget{struct_b_tree_1_1_node}{}\label{struct_b_tree_1_1_node}\index{BTree$<$ Key, Value, Compare $>$::Node@{BTree$<$ Key, Value, Compare $>$::Node}}
+
+
+Represents a single node in the B-\/\+Tree.  
+
+
+
+
+{\ttfamily \#include $<$btree.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_b_tree_1_1_node_ac96ca8a83369119de34217b4e1b555ce}{Node}} (bool leaf)
+\begin{DoxyCompactList}\small\item\em Constructs a node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_ad1db84a3bcb4213ef4e296a13c7725c4}\label{struct_b_tree_1_1_node_ad1db84a3bcb4213ef4e296a13c7725c4} 
+bool {\bfseries is\+Leaf}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_a8853b4e55ac80bd2de9859331d7f1c56}\label{struct_b_tree_1_1_node_a8853b4e55ac80bd2de9859331d7f1c56} 
+std\+::vector$<$ Key $>$ {\bfseries keys}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_aadaf81dc6d9ade4bcbc18ed5931db4f9}\label{struct_b_tree_1_1_node_aadaf81dc6d9ade4bcbc18ed5931db4f9} 
+std\+::vector$<$ \mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*} $>$ {\bfseries children}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_a7299f9b42d2950419e77fb4ec43c68a6}\label{struct_b_tree_1_1_node_a7299f9b42d2950419e77fb4ec43c68a6} 
+boost\+::container\+::small\+\_\+vector$<$ std\+::pair$<$ Key, Value $>$, \mbox{\hyperlink{class_b_tree_aa466823af040ada3f5a56574e337a526}{s\+\_\+\+CAPACITY}} $>$ {\bfseries entries}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_a6243a19d098b2cd614f3d637f9935505}\label{struct_b_tree_1_1_node_a6243a19d098b2cd614f3d637f9935505} 
+\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*} {\bfseries next\+Leaf}
+\item 
+\Hypertarget{struct_b_tree_1_1_node_a641d5ee0b0a63af3fd0c6498e19199ff}\label{struct_b_tree_1_1_node_a641d5ee0b0a63af3fd0c6498e19199ff} 
+\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*} {\bfseries prev\+Leaf}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Key, typename Value, typename Compare = std\+::less$<$\+Key$>$$>$\newline
+struct BTree$<$ Key, Value, Compare $>$\+::\+Node}
+Represents a single node in the B-\/\+Tree. 
+
+Holds up to {\ttfamily \doxylink{class_b_tree_aa466823af040ada3f5a56574e337a526}{BTree\+::s\+\_\+\+CAPACITY}} entries in a leaf. 
+
+\label{doc-constructors}
+\Hypertarget{struct_b_tree_1_1_node_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_b_tree_1_1_node_ac96ca8a83369119de34217b4e1b555ce}\index{BTree$<$ Key, Value, Compare $>$::Node@{BTree$<$ Key, Value, Compare $>$::Node}!Node@{Node}}
+\index{Node@{Node}!BTree$<$ Key, Value, Compare $>$::Node@{BTree$<$ Key, Value, Compare $>$::Node}}
+\doxysubsubsection{\texorpdfstring{Node()}{Node()}}
+{\footnotesize\ttfamily \label{struct_b_tree_1_1_node_ac96ca8a83369119de34217b4e1b555ce} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+\mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::\+Node\+::\+Node (\begin{DoxyParamCaption}\item[{bool}]{leaf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructs a node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em leaf} & If true, this node will act as a leaf; otherwise as an internal node. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/btree.\+h\item 
+src/btree.\+cpp\end{DoxyCompactItemize}

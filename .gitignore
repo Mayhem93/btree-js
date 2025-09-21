@@ -6,5 +6,4 @@ notes
 *.txt
 build/*
 out/*
-doc/*
 vcpkg_installed

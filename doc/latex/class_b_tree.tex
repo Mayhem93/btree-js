@@ -1,0 +1,575 @@
+\doxysection{BTree\texorpdfstring{$<$}{<} Key, Value, Compare \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{class_b_tree}{}\label{class_b_tree}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+
+
+A templated B-\/\+Tree container for sorted key/value storage.  
+
+
+
+
+{\ttfamily \#include $<$btree.\+h$>$}
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_b_tree_1_1_iterator}{Iterator}}
+\item 
+struct \mbox{\hyperlink{struct_b_tree_1_1_node}{Node}}
+\begin{DoxyCompactList}\small\item\em Represents a single node in the B-\/\+Tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_b_tree_ac7841baccc584bd46c5ddbaa269c7c69}{BTree}} (const Compare \&comp=Compare\{\})
+\begin{DoxyCompactList}\small\item\em Constructs an empty B-\/\+Tree with a custom comparator. \end{DoxyCompactList}\item 
+Value \& \mbox{\hyperlink{class_b_tree_adfb513daae74e467d51c9bf88af2596a}{operator\mbox{[}$\,$\mbox{]}}} (const Key \&key)
+\begin{DoxyCompactList}\small\item\em Accesses the value associated with a key. This does a search behind the scenes so don\textquotesingle{}t use it for repeated access, instead loop over the iterator and do your custom logic there. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_b_tree_a4a1d1d6517f181018efa489d009d0fcc}{size}} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of key/value pairs stored in the tree. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_b_tree_a1f618d0a26ec20a12ad3b05e06c78970}{insert}} (const Key \&key, const Value \&value)
+\begin{DoxyCompactList}\small\item\em Inserts a key/value pair into the tree. \end{DoxyCompactList}\item 
+Value \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_b_tree_a6ac491a77f862fa00a94cf7a688d7e48}{search}} (const Key \&key) const
+\begin{DoxyCompactList}\small\item\em Searches for the value associated with a given key. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_b_tree_a0a0989a366b92907a8389360532e201b}{remove}} (const Key \&key)
+\begin{DoxyCompactList}\small\item\em Removes the entry with the specified key. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::pair$<$ const Key \texorpdfstring{$\ast$}{*}, Value \texorpdfstring{$\ast$}{*} $>$ $>$ \mbox{\hyperlink{class_b_tree_a7dd69dade4718a185d457a71d855b517}{range}} (const Key \&low, const Key \&high)
+\begin{DoxyCompactList}\small\item\em Collects all entries whose keys are within \mbox{[}low, high\mbox{]}, inclusive. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::pair$<$ const Key \texorpdfstring{$\ast$}{*}, Value \texorpdfstring{$\ast$}{*} $>$ $>$ \mbox{\hyperlink{class_b_tree_a50a547458b425a5d3edbf31cbe6d350e}{range}} (const Key \&low, size\+\_\+t count)
+\begin{DoxyCompactList}\small\item\em Collects up to {\ttfamily count} entries starting at key ≥ low. \end{DoxyCompactList}\item 
+\Hypertarget{class_b_tree_ae19db29abae4b851f8fe671356e6f3e5}\label{class_b_tree_ae19db29abae4b851f8fe671356e6f3e5} 
+std\+::string {\bfseries serialize\+To\+Json} () const
+\item 
+\mbox{\hyperlink{class_b_tree_1_1_iterator}{Iterator}} \mbox{\hyperlink{class_b_tree_a150e650122b9926ad7bcfcacda0046d8}{begin}} ()
+\begin{DoxyCompactList}\small\item\em Returns an iterator to the first (smallest) element. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_b_tree_1_1_iterator}{Iterator}} \mbox{\hyperlink{class_b_tree_a0346e361fbb10fa5827c8c00a9cea2e1}{end}} () noexcept
+\begin{DoxyCompactList}\small\item\em Returns an iterator one past the last element. \end{DoxyCompactList}\item 
+\Hypertarget{class_b_tree_a6539ce4056146a8bfdfb9cac1e31cac6}\label{class_b_tree_a6539ce4056146a8bfdfb9cac1e31cac6} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+BTree} ()
+\begin{DoxyCompactList}\small\item\em Destroys the B-\/\+Tree, freeing all internal nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_b_tree_aa466823af040ada3f5a56574e337a526}\label{class_b_tree_aa466823af040ada3f5a56574e337a526} 
+static constexpr size\+\_\+t {\bfseries s\+\_\+\+CAPACITY} = 32
+\begin{DoxyCompactList}\small\item\em The maximum number of entries per node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_b_tree_a644946dc5c2b58a1c7ddf8d52fa1b2e8}{split\+Child}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}parent, size\+\_\+t index)
+\item 
+bool \mbox{\hyperlink{class_b_tree_a760c03d4ce002fdc71a531e2c47b420b}{insert\+Non\+Full}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, const Key \&key, const Value \&value)
+\item 
+void \mbox{\hyperlink{class_b_tree_a6a530f1aca4a6ab8d2009ea5e3dde846}{rebalance\+Leaf}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}leaf, \mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}parent, size\+\_\+t index)
+\item 
+void \mbox{\hyperlink{class_b_tree_af95c5741c674dc4532336c0adab4ea3a}{rebalance\+Internal}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, \mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}parent, size\+\_\+t index)
+\item 
+void \mbox{\hyperlink{class_b_tree_a4faf55ac6eafe3249ecfea528e2b6940}{remove\+From\+Node}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, const Key \&key)
+\item 
+Key \mbox{\hyperlink{class_b_tree_aa53d01b3c5039553df1f1fbe6afbf337}{get\+Predecessor}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx) const
+\item 
+Key \mbox{\hyperlink{class_b_tree_acf3b2d3f85cd319dd01dbffc970614c7}{get\+Successor}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx) const
+\item 
+void \mbox{\hyperlink{class_b_tree_a391b01dbf324db440cc17a77e631a064}{fill}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx)
+\item 
+void \mbox{\hyperlink{class_b_tree_a8db0d5ceac0ac47ed3a22ad5ea7b1d94}{borrow\+From\+Prev}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx)
+\item 
+void \mbox{\hyperlink{class_b_tree_aa8547724653e13afd62e9f2ef384ff2a}{borrow\+From\+Next}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx)
+\item 
+void \mbox{\hyperlink{class_b_tree_aac69f678bcb722552d0123503594b08d}{merge\+Nodes}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node, size\+\_\+t idx)
+\item 
+void \mbox{\hyperlink{class_b_tree_a5dcf22843ae0428dfc1dc6e108955c06}{destroy\+Node}} (\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}node)
+\item 
+bool \mbox{\hyperlink{class_b_tree_a2f8fc0b0f01e1839ceddd94b278d05ae}{less}} (const Key \&a, const Key \&b) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_b_tree_ae2247628055012a287a74e867387907b}\label{class_b_tree_ae2247628055012a287a74e867387907b} 
+\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*} {\bfseries m\+\_\+\+Root}
+\item 
+\Hypertarget{class_b_tree_a57018808061e9c67766f141462cf5a68}\label{class_b_tree_a57018808061e9c67766f141462cf5a68} 
+Compare {\bfseries m\+\_\+\+Comp}
+\item 
+\Hypertarget{class_b_tree_a7bf66fe9e6409ae8243026de448c2a27}\label{class_b_tree_a7bf66fe9e6409ae8243026de448c2a27} 
+size\+\_\+t {\bfseries m\+\_\+\+Size} \{0\}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_b_tree_a9830fc407400559db7e7783cc10a9394}\label{class_b_tree_a9830fc407400559db7e7783cc10a9394} 
+class {\bfseries Iterator}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Key, typename Value, typename Compare = std\+::less$<$\+Key$>$$>$\newline
+class BTree$<$ Key, Value, Compare $>$}
+A templated B-\/\+Tree container for sorted key/value storage. 
+
+Maintains balance by splitting and merging nodes as elements are inserted or removed, allowing efficient logarithmic-\/time operations.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Key} & Type of the keys stored in the tree. \\
+\hline
+{\em Value} & Type of the values associated with each key. \\
+\hline
+{\em Compare} & Functor used to order keys; defaults to std\+::less$<$\+Key$>$. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-constructors}
+\Hypertarget{class_b_tree_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_b_tree_ac7841baccc584bd46c5ddbaa269c7c69}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!BTree@{BTree}}
+\index{BTree@{BTree}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{BTree()}{BTree()}}
+{\footnotesize\ttfamily \label{class_b_tree_ac7841baccc584bd46c5ddbaa269c7c69} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+\mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\mbox{\hyperlink{class_b_tree}{\+::\+BTree}} (\begin{DoxyParamCaption}\item[{const Compare \&}]{comp}{ = {\ttfamily Compare\{\}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructs an empty B-\/\+Tree with a custom comparator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em comp} & A callable object that returns true if a \texorpdfstring{$<$}{<} b. Defaults to {\ttfamily std\+::less\texorpdfstring{$<$}{<}Key\texorpdfstring{$>$}{>}} \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{class_b_tree_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_b_tree_a150e650122b9926ad7bcfcacda0046d8}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!begin@{begin}}
+\index{begin@{begin}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{begin()}{begin()}}
+{\footnotesize\ttfamily \label{class_b_tree_a150e650122b9926ad7bcfcacda0046d8} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+\mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::\+Iterator \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::begin (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Returns an iterator to the first (smallest) element. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{class_b_tree_1_1_iterator}{Iterator} pointing at the minimum key. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_aa8547724653e13afd62e9f2ef384ff2a}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!borrowFromNext@{borrowFromNext}}
+\index{borrowFromNext@{borrowFromNext}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{borrowFromNext()}{borrowFromNext()}}
+{\footnotesize\ttfamily \label{class_b_tree_aa8547724653e13afd62e9f2ef384ff2a} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::borrow\+From\+Next (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Borrows one key–child pair (internal nodes) or one entry (leaf nodes) from the immediate right sibling of the child at index {\ttfamily idx}, updating the parent’s separator key to restore B-\/\+Tree invariants.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the parent node whose child at {\ttfamily idx} is underfull. \\
+\hline
+{\em idx} & Index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} of the underfull child to which the right sibling will lend. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a8db0d5ceac0ac47ed3a22ad5ea7b1d94}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!borrowFromPrev@{borrowFromPrev}}
+\index{borrowFromPrev@{borrowFromPrev}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{borrowFromPrev()}{borrowFromPrev()}}
+{\footnotesize\ttfamily \label{class_b_tree_a8db0d5ceac0ac47ed3a22ad5ea7b1d94} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::borrow\+From\+Prev (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Borrows one key–child pair (internal nodes) or one entry (leaf nodes) from the immediate left sibling of the child at index {\ttfamily idx}, updating the parent’s separator key to restore B-\/\+Tree invariants.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the parent node whose child at {\ttfamily idx} is underfull. \\
+\hline
+{\em idx} & Index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} of the underfull child to which the left sibling will lend. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a5dcf22843ae0428dfc1dc6e108955c06}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!destroyNode@{destroyNode}}
+\index{destroyNode@{destroyNode}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{destroyNode()}{destroyNode()}}
+{\footnotesize\ttfamily \label{class_b_tree_a5dcf22843ae0428dfc1dc6e108955c06} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::destroy\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Recursively deletes the subtree rooted at {\ttfamily node}, freeing all allocated nodes.
+
+This routine traverses each child pointer, invokes itself on that child, then deletes {\ttfamily node} itself. It is called by the destructor to teardown the entire tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the root of the subtree to destroy. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a0346e361fbb10fa5827c8c00a9cea2e1}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!end@{end}}
+\index{end@{end}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{end()}{end()}}
+{\footnotesize\ttfamily \label{class_b_tree_a0346e361fbb10fa5827c8c00a9cea2e1} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+\mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::\+Iterator \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::end (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Returns an iterator one past the last element. 
+
+\begin{DoxyReturn}{Returns}
+End iterator. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a391b01dbf324db440cc17a77e631a064}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!fill@{fill}}
+\index{fill@{fill}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{fill()}{fill()}}
+{\footnotesize\ttfamily \label{class_b_tree_a391b01dbf324db440cc17a77e631a064} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::fill (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Ensures that the child at index {\ttfamily idx} has at least the minimum number of keys or entries by borrowing from a sibling or merging when underflow occurs.
+
+If the immediate left or right sibling of the underflowing child has enough entries (or keys for internal nodes), this method borrows one and updates the parent’s separator key. If neither sibling can lend, it merges the child with an adjacent sibling and adjusts the parent’s keys and child pointers.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the parent node whose child may underflow. \\
+\hline
+{\em idx} & The index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} of the child to fill. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_aa53d01b3c5039553df1f1fbe6afbf337}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!getPredecessor@{getPredecessor}}
+\index{getPredecessor@{getPredecessor}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{getPredecessor()}{getPredecessor()}}
+{\footnotesize\ttfamily \label{class_b_tree_aa53d01b3c5039553df1f1fbe6afbf337} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+auto \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::get\+Predecessor (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [private]}}
+
+Finds the in-\/order predecessor of the key at the given child index.
+
+Starting from the child pointer at {\ttfamily node-\/\texorpdfstring{$>$}{>}children\mbox{[}idx\mbox{]}}, this method descends down to the rightmost leaf in that subtree and returns its last entry’s key. This key serves as the predecessor for {\ttfamily node-\/\texorpdfstring{$>$}{>}keys\mbox{[}idx\mbox{]}} when replacing or deleting internal-\/node keys.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the internal node whose predecessor is sought. \\
+\hline
+{\em idx} & Child index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} from which to start. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The largest key in the subtree rooted at {\ttfamily node-\/\texorpdfstring{$>$}{>}children\mbox{[}idx\mbox{]}}. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_acf3b2d3f85cd319dd01dbffc970614c7}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!getSuccessor@{getSuccessor}}
+\index{getSuccessor@{getSuccessor}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{getSuccessor()}{getSuccessor()}}
+{\footnotesize\ttfamily \label{class_b_tree_acf3b2d3f85cd319dd01dbffc970614c7} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+auto \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::get\+Successor (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [private]}}
+
+Finds the in-\/order successor of the key at the given child index.
+
+Starting from the child pointer at {\ttfamily node-\/\texorpdfstring{$>$}{>}children\mbox{[}idx + 1\mbox{]}}, this method descends down to the leftmost leaf in that subtree and returns its first entry’s key. This key serves as the successor for {\ttfamily node-\/\texorpdfstring{$>$}{>}keys\mbox{[}idx\mbox{]}} when replacing or deleting internal-\/node keys.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the internal node whose successor is sought. \\
+\hline
+{\em idx} & Child index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} preceding the target subtree. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The smallest key in the subtree rooted at {\ttfamily node-\/\texorpdfstring{$>$}{>}children\mbox{[}idx + 1\mbox{]}}. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a1f618d0a26ec20a12ad3b05e06c78970}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!insert@{insert}}
+\index{insert@{insert}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily \label{class_b_tree_a1f618d0a26ec20a12ad3b05e06c78970} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+bool \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::insert (\begin{DoxyParamCaption}\item[{const Key \&}]{key}{, }\item[{const Value \&}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Inserts a key/value pair into the tree. 
+
+If the key does not already exist, a new node is created. If the key exists, the insertion is skipped.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key to insert. \\
+\hline
+{\em value} & The value to associate with the key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the pair was inserted; false if the key was already present. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a760c03d4ce002fdc71a531e2c47b420b}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!insertNonFull@{insertNonFull}}
+\index{insertNonFull@{insertNonFull}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{insertNonFull()}{insertNonFull()}}
+{\footnotesize\ttfamily \label{class_b_tree_a760c03d4ce002fdc71a531e2c47b420b} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+bool \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::insert\+Non\+Full (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{const Key \&}]{key}{, }\item[{const Value \&}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Inserts a key–value pair into a node that is guaranteed not to be full.
+
+This routine handles both leaf and internal nodes\+:
+\begin{DoxyItemize}
+\item If {\ttfamily node} is a leaf, it finds the correct position, updates an existing entry if the key already exists, or inserts a new one.
+\item If {\ttfamily node} is internal, it locates the child slot, pre-\/splits the child if it’s full, and then recurses into that child.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to a B-\/\+Tree node that has space for at least one more entry. \\
+\hline
+{\em key} & The key to insert or update. \\
+\hline
+{\em value} & The value to associate with {\ttfamily key}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if a new entry was inserted (tree size should be incremented), {\ttfamily false} if an existing entry was overwritten. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a2f8fc0b0f01e1839ceddd94b278d05ae}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!less@{less}}
+\index{less@{less}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{less()}{less()}}
+{\footnotesize\ttfamily \label{class_b_tree_a2f8fc0b0f01e1839ceddd94b278d05ae} 
+template$<$typename Key, typename Value, typename Compare = std\+::less$<$\+Key$>$$>$ \\
+bool \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::less (\begin{DoxyParamCaption}\item[{const Key \&}]{a}{, }\item[{const Key \&}]{b}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+Compares two keys, wrapper function for {\ttfamily Compare m\+\_\+\+Comp} 
+\begin{DoxyParams}{Parameters}
+{\em a} & The first key to compare. \\
+\hline
+{\em b} & The second key to compare. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if a is "{}less"{} than b, false otherwise. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_aac69f678bcb722552d0123503594b08d}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!mergeNodes@{mergeNodes}}
+\index{mergeNodes@{mergeNodes}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{mergeNodes()}{mergeNodes()}}
+{\footnotesize\ttfamily \label{class_b_tree_aac69f678bcb722552d0123503594b08d} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::merge\+Nodes (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Merges the child at index {\ttfamily idx} with its adjacent sibling and removes the sibling.
+
+For leaf nodes, this concatenates both nodes’ entries and stitches the leaf‐level "{}linked list"{}. For internal nodes, it pulls down the parent’s separator key, appends the right sibling’s keys and children to the left child, and then removes the right sibling pointer and its key from the parent.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the parent node containing the two siblings. \\
+\hline
+{\em idx} & Index in {\ttfamily node-\/\texorpdfstring{$>$}{>}children} of the left child to merge; its right sibling lives at {\ttfamily idx + 1}. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_adfb513daae74e467d51c9bf88af2596a}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily \label{class_b_tree_adfb513daae74e467d51c9bf88af2596a} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+Value \& \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{const Key \&}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Accesses the value associated with a key. This does a search behind the scenes so don\textquotesingle{}t use it for repeated access, instead loop over the iterator and do your custom logic there. 
+
+If the key exists, returns a reference to its value. Otherwise, an out of range exception will be thrown
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key to locate or insert. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to the mapped value. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a7dd69dade4718a185d457a71d855b517}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!range@{range}}
+\index{range@{range}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{range()}{range()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_b_tree_a7dd69dade4718a185d457a71d855b517} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+std\+::vector$<$ std\+::pair$<$ const Key \texorpdfstring{$\ast$}{*}, Value \texorpdfstring{$\ast$}{*} $>$ $>$ \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::range (\begin{DoxyParamCaption}\item[{const Key \&}]{low}{, }\item[{const Key \&}]{high}{}\end{DoxyParamCaption})}
+
+
+
+Collects all entries whose keys are within \mbox{[}low, high\mbox{]}, inclusive. 
+
+Performs an in-\/order traversal to gather matching entries in ascending key order.
+
+
+\begin{DoxyParams}{Parameters}
+{\em low} & The lower bound key (inclusive). \\
+\hline
+{\em high} & The upper bound key (inclusive). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of (key pointer, value pointer) pairs for matching entries. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a50a547458b425a5d3edbf31cbe6d350e}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!range@{range}}
+\index{range@{range}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{range()}{range()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_b_tree_a50a547458b425a5d3edbf31cbe6d350e} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+std\+::vector$<$ std\+::pair$<$ const Key \texorpdfstring{$\ast$}{*}, Value \texorpdfstring{$\ast$}{*} $>$ $>$ \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::range (\begin{DoxyParamCaption}\item[{const Key \&}]{low}{, }\item[{size\+\_\+t}]{count}{}\end{DoxyParamCaption})}
+
+
+
+Collects up to {\ttfamily count} entries starting at key ≥ low. 
+
+Traverses the tree in order beginning at the first entry ≥ low, gathering at most {\ttfamily count} results.
+
+
+\begin{DoxyParams}{Parameters}
+{\em low} & The starting key (inclusive). \\
+\hline
+{\em count} & Maximum number of entries to return. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of (key pointer, value pointer) pairs for the first {\ttfamily count} entries ≥ low. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_af95c5741c674dc4532336c0adab4ea3a}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!rebalanceInternal@{rebalanceInternal}}
+\index{rebalanceInternal@{rebalanceInternal}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{rebalanceInternal()}{rebalanceInternal()}}
+{\footnotesize\ttfamily \label{class_b_tree_af95c5741c674dc4532336c0adab4ea3a} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::rebalance\+Internal (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{parent}{, }\item[{size\+\_\+t}]{index}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Rebalances an internal node that has fallen below the minimum key threshold.
+
+This method restores an internal node’s capacity by first attempting to borrow a key–child pair from its immediate left or right sibling. If neither sibling has extra keys, it merges the underfull node with one sibling, pulls down the separator key from the parent, and updates the parent’s keys and child pointers accordingly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the internal node that needs rebalancing. \\
+\hline
+{\em parent} & Pointer to the parent node containing separator keys and references to its children. \\
+\hline
+{\em index} & The index in {\ttfamily parent-\/\texorpdfstring{$>$}{>}children} where {\ttfamily node} is located. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a6a530f1aca4a6ab8d2009ea5e3dde846}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!rebalanceLeaf@{rebalanceLeaf}}
+\index{rebalanceLeaf@{rebalanceLeaf}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{rebalanceLeaf()}{rebalanceLeaf()}}
+{\footnotesize\ttfamily \label{class_b_tree_a6a530f1aca4a6ab8d2009ea5e3dde846} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::rebalance\+Leaf (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{leaf}{, }\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{parent}{, }\item[{size\+\_\+t}]{index}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Rebalances a leaf node that has fallen below the minimum entry threshold.
+
+This method restores a leaf’s capacity by first attempting to borrow an entry from its immediate left or right sibling. If neither sibling has spare entries, it merges the underfull leaf with one sibling and updates the parent’s keys and child pointers accordingly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em leaf} & Pointer to the leaf node that needs rebalancing. \\
+\hline
+{\em parent} & Pointer to the parent node containing the separator key and references to its children. \\
+\hline
+{\em index} & The index in {\ttfamily parent-\/\texorpdfstring{$>$}{>}children} where {\ttfamily leaf} is located. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a0a0989a366b92907a8389360532e201b}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!remove@{remove}}
+\index{remove@{remove}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily \label{class_b_tree_a0a0989a366b92907a8389360532e201b} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+bool \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::remove (\begin{DoxyParamCaption}\item[{const Key \&}]{key}{}\end{DoxyParamCaption})}
+
+
+
+Removes the entry with the specified key. 
+
+Finds the node matching key, removes it, and rebalances the tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key of the entry to remove. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if an element was removed; false if the key was not found. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a4faf55ac6eafe3249ecfea528e2b6940}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!removeFromNode@{removeFromNode}}
+\index{removeFromNode@{removeFromNode}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{removeFromNode()}{removeFromNode()}}
+{\footnotesize\ttfamily \label{class_b_tree_a4faf55ac6eafe3249ecfea528e2b6940} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::remove\+From\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{node}{, }\item[{const Key \&}]{key}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Removes a key from the subtree rooted at {\ttfamily node}, preserving B-\/\+Tree invariants.
+
+This routine handles three major scenarios\+:
+\begin{DoxyEnumerate}
+\item If {\ttfamily node} is a leaf and contains {\ttfamily key}, it erases the entry directly.
+\item If {\ttfamily node} is internal and contains {\ttfamily key}, it replaces {\ttfamily key} with its predecessor or successor—or merges children when neither side can lend— then continues removal in the affected subtree.
+\item If {\ttfamily key} is not present in {\ttfamily node}, it locates the correct child slot, ensures that child has enough entries (borrowing or merging if underflow), and recurses into that child.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the node where removal begins. \\
+\hline
+{\em key} & The key to remove from the tree. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_b_tree_a6ac491a77f862fa00a94cf7a688d7e48}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!search@{search}}
+\index{search@{search}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{search()}{search()}}
+{\footnotesize\ttfamily \label{class_b_tree_a6ac491a77f862fa00a94cf7a688d7e48} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+Value \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::search (\begin{DoxyParamCaption}\item[{const Key \&}]{key}{}\end{DoxyParamCaption}) const}
+
+
+
+Searches for the value associated with a given key. 
+
+Traverses the tree to locate the node matching key.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key to look up. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the stored value if found; nullptr if the key is not in the tree. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a4a1d1d6517f181018efa489d009d0fcc}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!size@{size}}
+\index{size@{size}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily \label{class_b_tree_a4a1d1d6517f181018efa489d009d0fcc} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+size\+\_\+t \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Returns the number of key/value pairs stored in the tree. 
+
+This size of the B+\+Tree is updated during insertions and deletions and thus not computed.
+
+\begin{DoxyReturn}{Returns}
+The number of entries in the tree. 
+\end{DoxyReturn}
+\Hypertarget{class_b_tree_a644946dc5c2b58a1c7ddf8d52fa1b2e8}\index{BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}!splitChild@{splitChild}}
+\index{splitChild@{splitChild}!BTree$<$ Key, Value, Compare $>$@{BTree$<$ Key, Value, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{splitChild()}{splitChild()}}
+{\footnotesize\ttfamily \label{class_b_tree_a644946dc5c2b58a1c7ddf8d52fa1b2e8} 
+template$<$typename Key, typename Value, typename Compare$>$ \\
+void \mbox{\hyperlink{class_b_tree}{BTree}}$<$ Key, Value, Compare $>$\+::split\+Child (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_b_tree_1_1_node}{Node}} \texorpdfstring{$\ast$}{*}}]{parent}{, }\item[{size\+\_\+t}]{index}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Divides a full child node into two siblings by moving the upper half of its entries into a new node, promotes the median key into the parent, and links the new sibling so the tree remains balanced.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & The parent of the node to split. \\
+\hline
+{\em index} & The index in the node where to to split. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/btree.\+h\item 
+src/btree.\+cpp\end{DoxyCompactItemize}

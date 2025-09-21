@@ -1,0 +1,58 @@
+\doxysection{btree\+\_\+wrapper.\+h}
+\hypertarget{btree__wrapper_8h_source}{}\label{btree__wrapper_8h_source}\index{src/btree\_wrapper.h@{src/btree\_wrapper.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include<node.h>}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include<node\_object\_wrap.h>}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}btree.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{using\ namespace\ }v8;}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }BTreeAddon}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{struct\ }JsHandle\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ Isolate\ *i;}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ Global<Value>\ h;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}(Isolate\ *isolate,\ Local<Value>\ value);}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \textcolor{keyword}{const}\ \&other);}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \&operator=(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \textcolor{keyword}{const}\ \&other);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \&\&)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \&operator=(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \&\&)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00020\ \ \ \ \ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{struct\ }JsComparator\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ Isolate\ *i;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}();}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}(Isolate\ *isolate);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}\ \textcolor{keyword}{const}\ \&o);}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}\&\ operator=(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_comparator}{BTreeAddon::JsComparator}}\ \textcolor{keyword}{const}\ \&o);}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ operator()(\mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \textcolor{keyword}{const}\ \&a,\ \mbox{\hyperlink{struct_b_tree_addon_1_1_js_handle}{BTreeAddon::JsHandle}}\ \textcolor{keyword}{const}\ \&b)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ \ \ \ \ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{using\ }BTreeJs\ =\ \mbox{\hyperlink{class_b_tree}{BTree<JsHandle,\ JsHandle,\ JsComparator>}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{class\ }BTreeWrapper\ :\ \textcolor{keyword}{public}\ node::ObjectWrap\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Init(Local<Object>\ exports);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ BTreeWrapper();}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \string~BTreeWrapper()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ New(\textcolor{keyword}{const}\ FunctionCallbackInfo<Value>\&\ args);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Insert(\textcolor{keyword}{const}\ FunctionCallbackInfo<Value>\&\ args);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Search(\textcolor{keyword}{const}\ FunctionCallbackInfo<Value>\&\ args);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Remove(\textcolor{keyword}{const}\ FunctionCallbackInfo<Value>\&\ args);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ Size(\textcolor{keyword}{const}\ FunctionCallbackInfo<Value>\&\ args);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<BTreeJs>\ m\_Tree;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Persistent<Function>\ s\_Constructor;}
+\DoxyCodeLine{00051\ \ \ \ \ \};}
+\DoxyCodeLine{00052\ \}}
+
+\end{DoxyCode}
