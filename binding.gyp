@@ -3,7 +3,7 @@
     {
       "target_name": "myaddon",
       "sources": [
-        "src/myaddon.cpp",
+        "src/btree_addon.cpp",
         "src/btree.cpp",
         "src/btree_wrapper.cpp"
       ],
