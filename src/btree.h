@@ -28,6 +28,8 @@ class BTree
 		 * @brief The maximum number of entries per node.
 		*/
 		static constexpr size_t s_CAPACITY = 32;
+		static constexpr size_t s_MAX_KEYS = 2 * s_CAPACITY - 1;
+		static constexpr size_t s_MAX_CHILDREN = 2 * s_CAPACITY;
 
 		/**
 		 * @brief Constructs an empty B-Tree with a custom comparator.
@@ -37,18 +39,41 @@ class BTree
 		 */
 		explicit BTree(const Compare& comp = Compare{});
 
+		struct Node;
+
+		struct InternalNode
+		{
+			boost::container::small_vector<Key, s_MAX_KEYS> keys;
+			boost::container::small_vector<Node *, s_MAX_CHILDREN> children;
+
+			~InternalNode() = default;
+		};
+
+		struct LeafNode
+		{
+			boost::container::small_vector<std::pair<Key, Value>, s_MAX_KEYS> entries;
+
+			~LeafNode() = default;
+		};
+
 		/**
 		 * @struct Node
 		 * @brief Represents a single node in the B-Tree.
 		 *
-		 * Holds up to `BTree::s_CAPACITY` entries in a leaf.
+		 * Holds up to `BTree::s_MAX_KEYS` entries in a leaf.
 		 */
 		struct Node
 		{
+			union
+			{
+				InternalNode internal;
+				LeafNode leaf;
+			};
+
 			bool isLeaf;
-			std::vector<Key> keys;
-			std::vector<Node*> children;
-			boost::container::small_vector<std::pair<Key, Value>, s_CAPACITY> entries;
+			// boost::container::small_vector<Key, s_MAX_KEYS> keys;
+			// boost::container::small_vector<Node*, s_MAX_CHILDREN> children;
+			// boost::container::small_vector<std::pair<Key, Value>, s_MAX_KEYS> entries;
 			Node* nextLeaf;
 			Node* prevLeaf;
 
@@ -58,6 +83,7 @@ class BTree
 			 * @param leaf  If true, this node will act as a leaf; otherwise as an internal node.
 			*/
 			explicit Node(bool leaf);
+			~Node();
 		};
 
 		/**
