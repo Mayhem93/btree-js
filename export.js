@@ -1,1 +1,1 @@
-module.exports = require('./build/Release/myaddon.node');
+module.exports = require('./build/Release/btreejs.node');

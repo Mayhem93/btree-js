@@ -833,7 +833,6 @@ typename BTree<Key, Value, Compare>::Iterator &BTree<Key, Value, Compare>::Itera
 		while (n && !n->isLeaf)
 		{
 			n = n->children.back();
-
 		}
 
 		if (n && !n->entries.empty())

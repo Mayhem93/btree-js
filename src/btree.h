@@ -18,7 +18,7 @@
  *
  * @tparam Key     Type of the keys stored in the tree.
  * @tparam Value   Type of the values associated with each key.
- * @tparam Compare Functor used to order keys; defaults to std::less<Key>.
+ * @tparam Compare Functor used to order keys; defaults to `std::less<Key>`.
 */
 template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree

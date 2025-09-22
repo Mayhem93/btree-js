@@ -10,6 +10,10 @@ namespace BTreeAddon
 	struct JsHandle {
 		Isolate *i;
 		Global<Value> h;
+		bool isNumber;
+		bool isString;
+		double numberVal;
+		std::string stringVal;
 
 		BTreeAddon::JsHandle(Isolate *isolate, Local<Value> value);
 		BTreeAddon::JsHandle(BTreeAddon::JsHandle const &other);

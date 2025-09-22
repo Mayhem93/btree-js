@@ -9,12 +9,29 @@ namespace BTreeAddon
 {
 	using BTreeJs = BTree<JsHandle, JsHandle, JsComparator>;
 
-	JsHandle::JsHandle(Isolate *isolate, Local<Value> value) : h(isolate, value), i(isolate) {}
-	JsHandle::JsHandle(JsHandle const &other) : i(other.i), h(other.i, Local<Value>::New(other.i, other.h)) {}
+	JsHandle::JsHandle(Isolate *isolate, Local<Value> value) : h(isolate, value), i(isolate)
+	{
+		if (value->IsNumber()) {
+			isNumber = true;
+			numberVal = value->NumberValue(isolate->GetCurrentContext()).ToChecked();
+		} else if (value->IsString()) {
+			isString = true;
+			auto str = value->ToString(i->GetCurrentContext()).ToLocalChecked();
+			stringVal.assign(*String::Utf8Value(isolate, str));
+		}
+	}
+	JsHandle::JsHandle(JsHandle const &other) :
+		i(other.i),
+		h(other.i, Local<Value>::New(other.i, other.h)),
+		isNumber(other.isNumber),
+		isString(other.isString),
+		numberVal(other.numberVal),
+		stringVal(other.stringVal) {}
 	JsHandle::JsHandle(JsHandle &&) noexcept = default;
 	JsHandle &JsHandle::operator=(JsHandle &&) noexcept = default;
 
-	JsHandle &JsHandle::operator=(JsHandle const &other) {
+	JsHandle &JsHandle::operator=(JsHandle const &other)
+	{
 		if (this != &other)
 		{
 			i = other.i;
@@ -30,6 +47,14 @@ namespace BTreeAddon
 	JsComparator::JsComparator(JsComparator const &o) = default;
 	JsComparator& JsComparator::operator=(JsComparator const &o) = default;
 	bool JsComparator::operator()(JsHandle const &a, JsHandle const &b) const {
+		if (a.isNumber &&b.isNumber) {
+			return a.numberVal < b.numberVal;
+		}
+
+		if (a.isString && b.isString) {
+			return a.stringVal < b.stringVal;
+		}
+
 		HandleScope hs(i);
 
 		Local<Context> ctx = i->GetCurrentContext();
@@ -37,10 +62,28 @@ namespace BTreeAddon
 		Local<Value> la = v8::Local<v8::Value>::New(i, a.h);
 		Local<Value> lb = v8::Local<v8::Value>::New(i, b.h);
 
-		double da = la->NumberValue(ctx).ToChecked();
-		double db = lb->NumberValue(ctx).ToChecked();
+		// If they’re strictly equal, neither is less
+		if (la->StrictEquals(lb))
+		{
+			return false;
+		}
 
-		return da < db;
+		// Use V8’s generic Equals (returns Maybe<bool>)
+		Maybe<bool> maybeEq = la->Equals(ctx, lb);
+		bool isEq = maybeEq.FromMaybe(false);
+
+		if (isEq)
+		{
+			return false;
+		}
+
+		// Last resort: compare type names or addresses for a stable ordering
+		// e.g. numbers < strings < objects, or pointer‐based tie breaker
+		// Here, we’ll just compare the pointer values of the persistent handles:
+		auto pa = reinterpret_cast<uintptr_t>(*la);
+		auto pb = reinterpret_cast<uintptr_t>(*lb);
+
+		return pa < pb;
 	}
 
 	Persistent<Function, NonCopyablePersistentTraits<Function>> BTreeWrapper::s_Constructor;
