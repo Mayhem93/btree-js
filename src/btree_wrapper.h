@@ -9,7 +9,7 @@ namespace BTreeAddon
 {
 	struct JsHandle {
 		Isolate *i;
-		Global<Value> h;
+		Persistent<Value, NonCopyablePersistentTraits<Value>> h;
 		bool isNumber;
 		bool isString;
 		double numberVal;
@@ -19,8 +19,7 @@ namespace BTreeAddon
 		BTreeAddon::JsHandle(BTreeAddon::JsHandle const &other);
 		BTreeAddon::JsHandle &operator=(BTreeAddon::JsHandle const &other);
 
-		BTreeAddon::JsHandle(BTreeAddon::JsHandle &&) noexcept;
-		BTreeAddon::JsHandle &operator=(BTreeAddon::JsHandle &&) noexcept;
+		~JsHandle();
 	};
 
 	struct JsComparator {
@@ -53,6 +52,6 @@ namespace BTreeAddon
 
 			std::unique_ptr<BTreeJs> m_Tree;
 
-			static Persistent<Function> s_Constructor;
+			static Persistent<Function, NonCopyablePersistentTraits<Function>> s_Constructor;
 	};
 }

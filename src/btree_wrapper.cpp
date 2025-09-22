@@ -9,7 +9,7 @@ namespace BTreeAddon
 {
 	using BTreeJs = BTree<JsHandle, JsHandle, JsComparator>;
 
-	JsHandle::JsHandle(Isolate *isolate, Local<Value> value) : h(isolate, value), i(isolate)
+	JsHandle::JsHandle(Isolate *isolate, Local<Value> value) : i(isolate)
 	{
 		if (value->IsNumber()) {
 			isNumber = true;
@@ -18,28 +18,48 @@ namespace BTreeAddon
 			isString = true;
 			auto str = value->ToString(i->GetCurrentContext()).ToLocalChecked();
 			stringVal.assign(*String::Utf8Value(isolate, str));
+		} else {
+			h.Reset(i, value);
 		}
 	}
 	JsHandle::JsHandle(JsHandle const &other) :
 		i(other.i),
-		h(other.i, Local<Value>::New(other.i, other.h)),
 		isNumber(other.isNumber),
 		isString(other.isString),
 		numberVal(other.numberVal),
-		stringVal(other.stringVal) {}
-	JsHandle::JsHandle(JsHandle &&) noexcept = default;
-	JsHandle &JsHandle::operator=(JsHandle &&) noexcept = default;
+		stringVal(other.stringVal)
+	{
+		if (!isNumber && !isString) {
+			h.Reset(i, Local<Value>::New(i, other.h));
+		}
+	}
+	// JsHandle::JsHandle(JsHandle &&) noexcept = default;
+	// JsHandle &JsHandle::operator=(JsHandle &&) noexcept = default;
 
 	JsHandle &JsHandle::operator=(JsHandle const &other)
 	{
 		if (this != &other)
 		{
 			i = other.i;
+			isNumber = other.isNumber;
+			isString = other.isString;
+			numberVal = other.numberVal;
+			stringVal = other.stringVal;
 			h.Reset();
-			h.Reset(i, Local<Value>::New(i, other.h));
+
+			if (!isNumber && !isString)
+			{
+				h.Reset(i, Local<Value>::New(i, other.h));
+			}
 		}
 
 		return *this;
+	}
+
+	JsHandle::~JsHandle() {
+		if (!isNumber && !isString) {
+			h.Reset();
+		}
 	}
 
 	JsComparator::JsComparator() : i(Isolate::GetCurrent()) {}
@@ -175,10 +195,29 @@ namespace BTreeAddon
 
 		if (!result) {
 			args.GetReturnValue().Set(Null(isolate));
-		} else {
-			Local<Value> outVal = Local<Value>::New(isolate, result->h);
-			args.GetReturnValue().Set(outVal);
+
+			return;
 		}
+
+		Local<Value> outVal;
+		if (result->isNumber)
+		{
+			outVal = Number::New(isolate, result->numberVal);
+		}
+		else if (result->isString)
+		{
+			outVal = String::NewFromUtf8(
+				isolate,
+				result->stringVal.c_str(),
+				NewStringType::kNormal
+			).ToLocalChecked();
+		}
+		else
+		{
+			outVal = Local<Value>::New(isolate, result->h);
+		}
+
+		args.GetReturnValue().Set(outVal);
 	}
 
 	void BTreeWrapper::Remove(const FunctionCallbackInfo<Value>& args)
@@ -241,18 +280,43 @@ namespace BTreeAddon
 
 		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
 		{
-			Local<Value> key = Local<Value>::New(isolate, entry.first->h);
-			Local<Value> value = Local<Value>::New(isolate, entry.second->h);
-			MaybeLocal<Map> mlResult = result->Set(ctx, key, value);
-
-			if (mlResult.IsEmpty())
+			Local<Value> keyOut;
+			if (entry.first->isNumber)
 			{
-				isolate->ThrowException(
-					Exception::Error(String::NewFromUtf8Literal(isolate, "Map::Set failed"))
-				);
-
-				return;
+				keyOut = Number::New(isolate, entry.first->numberVal);
 			}
+			else if (entry.first->isString)
+			{
+				keyOut = String::NewFromUtf8(
+					isolate,
+					entry.first->stringVal.c_str(),
+					NewStringType::kNormal
+				).ToLocalChecked();
+			}
+			else
+			{
+				keyOut = Local<Value>::New(isolate, entry.first->h);
+			}
+
+			Local<Value> valOut;
+			if (entry.second->isNumber)
+			{
+				valOut = Number::New(isolate, entry.second->numberVal);
+			}
+			else if (entry.second->isString)
+			{
+				valOut = String::NewFromUtf8(
+					isolate,
+					entry.second->stringVal.c_str(),
+					NewStringType::kNormal
+				).ToLocalChecked();
+			}
+			else
+			{
+				valOut = Local<Value>::New(isolate, entry.second->h);
+			}
+
+			result->Set(ctx, keyOut, valOut).ToLocalChecked();
 		}
 
 		args.GetReturnValue().Set(result);
@@ -279,18 +343,43 @@ namespace BTreeAddon
 
 		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
 		{
-			Local<Value> key = Local<Value>::New(isolate, entry.first->h);
-			Local<Value> value = Local<Value>::New(isolate, entry.second->h);
-			MaybeLocal<Map> mlResult = result->Set(ctx, key, value);
-
-			if (mlResult.IsEmpty())
+			Local<Value> keyOut;
+			if (entry.first->isNumber)
 			{
-				isolate->ThrowException(
-					Exception::Error(String::NewFromUtf8Literal(isolate, "Failed to set Map entry"))
-				);
-
-				return;
+				keyOut = Number::New(isolate, entry.first->numberVal);
 			}
+			else if (entry.first->isString)
+			{
+				keyOut = String::NewFromUtf8(
+					isolate,
+					entry.first->stringVal.c_str(),
+					NewStringType::kNormal)
+					.ToLocalChecked();
+			}
+			else
+			{
+				keyOut = Local<Value>::New(isolate, entry.first->h);
+			}
+
+			Local<Value> valOut;
+			if (entry.second->isNumber)
+			{
+				valOut = Number::New(isolate, entry.second->numberVal);
+			}
+			else if (entry.second->isString)
+			{
+				valOut = String::NewFromUtf8(
+					isolate,
+					entry.second->stringVal.c_str(),
+					NewStringType::kNormal)
+					.ToLocalChecked();
+			}
+			else
+			{
+				valOut = Local<Value>::New(isolate, entry.second->h);
+			}
+
+			result->Set(ctx, keyOut, valOut).ToLocalChecked();
 		}
 
 		args.GetReturnValue().Set(result);
