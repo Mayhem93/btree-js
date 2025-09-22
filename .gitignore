@@ -7,3 +7,5 @@ notes
 build/*
 out/*
 vcpkg_installed
+*.etl
+*.zip

@@ -100,7 +100,9 @@ $(function(){initNavTree('class_b_tree.html','','class_b_tree-members'); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:InternalNode" id="r_InternalNode"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_b_tree_1_1_internal_node.html">InternalNode</a></td></tr>
 <tr class="memitem:Iterator" id="r_Iterator"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_tree_1_1_iterator.html">Iterator</a></td></tr>
+<tr class="memitem:LeafNode" id="r_LeafNode"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_b_tree_1_1_leaf_node.html">LeafNode</a></td></tr>
 <tr class="memitem:Node" id="r_Node"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_b_tree_1_1_node.html">Node</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single node in the B-Tree.  <a href="struct_b_tree_1_1_node.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
@@ -139,8 +141,12 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>serializeToJso
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:aa466823af040ada3f5a56574e337a526" id="r_aa466823af040ada3f5a56574e337a526"><td class="memItemLeft" align="right" valign="top"><a id="aa466823af040ada3f5a56574e337a526" name="aa466823af040ada3f5a56574e337a526"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>s_CAPACITY</b> = 32</td></tr>
+static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>s_CAPACITY</b> = 16</td></tr>
 <tr class="memdesc:aa466823af040ada3f5a56574e337a526"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of entries per node. <br /></td></tr>
+<tr class="memitem:a2de122770563bbd88ed5d46dd97073ad" id="r_a2de122770563bbd88ed5d46dd97073ad"><td class="memItemLeft" align="right" valign="top"><a id="a2de122770563bbd88ed5d46dd97073ad" name="a2de122770563bbd88ed5d46dd97073ad"></a>
+static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>s_MAX_KEYS</b> = 2 * <a class="el" href="#aa466823af040ada3f5a56574e337a526">s_CAPACITY</a> - 1</td></tr>
+<tr class="memitem:aaa884242c735d551a0fb2350adfd7bf8" id="r_aaa884242c735d551a0fb2350adfd7bf8"><td class="memItemLeft" align="right" valign="top"><a id="aaa884242c735d551a0fb2350adfd7bf8" name="aaa884242c735d551a0fb2350adfd7bf8"></a>
+static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>s_MAX_CHILDREN</b> = 2 * <a class="el" href="#aa466823af040ada3f5a56574e337a526">s_CAPACITY</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -180,7 +186,7 @@ class BTree&lt; Key, Value, Compare &gt;</div><p>A templated B-Tree container fo
   <table class="tparams">
     <tr><td class="paramname">Key</td><td>Type of the keys stored in the tree. </td></tr>
     <tr><td class="paramname">Value</td><td>Type of the values associated with each key. </td></tr>
-    <tr><td class="paramname">Compare</td><td>Functor used to order keys; defaults to std::less&lt;Key&gt;. </td></tr>
+    <tr><td class="paramname">Compare</td><td>Functor used to order keys; defaults to <span class="tt">std::less&lt;Key&gt;</span>. </td></tr>
   </table>
   </dd>
 </dl>

@@ -27,7 +27,7 @@ class BTree
 		/**
 		 * @brief The maximum number of entries per node.
 		*/
-		static constexpr size_t s_CAPACITY = 32;
+		static constexpr size_t s_CAPACITY = 16;
 		static constexpr size_t s_MAX_KEYS = 2 * s_CAPACITY - 1;
 		static constexpr size_t s_MAX_CHILDREN = 2 * s_CAPACITY;
 

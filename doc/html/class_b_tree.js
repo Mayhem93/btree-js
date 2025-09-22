@@ -1,6 +1,8 @@
 var class_b_tree =
 [
+    [ "InternalNode", "struct_b_tree_1_1_internal_node.html", null ],
     [ "Iterator", "class_b_tree_1_1_iterator.html", null ],
+    [ "LeafNode", "struct_b_tree_1_1_leaf_node.html", null ],
     [ "Node", "struct_b_tree_1_1_node.html", "struct_b_tree_1_1_node" ],
     [ "BTree", "class_b_tree.html#ac7841baccc584bd46c5ddbaa269c7c69", null ],
     [ "~BTree", "class_b_tree.html#a6539ce4056146a8bfdfb9cac1e31cac6", null ],
