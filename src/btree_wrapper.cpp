@@ -14,10 +14,6 @@ namespace BTreeAddon
 		if (value->IsNumber()) {
 			isNumber = true;
 			numberVal = value->NumberValue(isolate->GetCurrentContext()).ToChecked();
-		} else if (value->IsString()) {
-			isString = true;
-			auto str = value->ToString(i->GetCurrentContext()).ToLocalChecked();
-			stringVal.assign(*String::Utf8Value(isolate, str));
 		} else {
 			h.Reset(i, value);
 		}
@@ -25,16 +21,12 @@ namespace BTreeAddon
 	JsHandle::JsHandle(JsHandle const &other) :
 		i(other.i),
 		isNumber(other.isNumber),
-		isString(other.isString),
-		numberVal(other.numberVal),
-		stringVal(other.stringVal)
+		numberVal(other.numberVal)
 	{
-		if (!isNumber && !isString) {
+		if (!isNumber) {
 			h.Reset(i, Local<Value>::New(i, other.h));
 		}
 	}
-	// JsHandle::JsHandle(JsHandle &&) noexcept = default;
-	// JsHandle &JsHandle::operator=(JsHandle &&) noexcept = default;
 
 	JsHandle &JsHandle::operator=(JsHandle const &other)
 	{
@@ -42,12 +34,10 @@ namespace BTreeAddon
 		{
 			i = other.i;
 			isNumber = other.isNumber;
-			isString = other.isString;
 			numberVal = other.numberVal;
-			stringVal = other.stringVal;
 			h.Reset();
 
-			if (!isNumber && !isString)
+			if (!isNumber)
 			{
 				h.Reset(i, Local<Value>::New(i, other.h));
 			}
@@ -57,7 +47,7 @@ namespace BTreeAddon
 	}
 
 	JsHandle::~JsHandle() {
-		if (!isNumber && !isString) {
+		if (!isNumber) {
 			h.Reset();
 		}
 	}
@@ -67,39 +57,22 @@ namespace BTreeAddon
 	JsComparator::JsComparator(JsComparator const &o) = default;
 	JsComparator& JsComparator::operator=(JsComparator const &o) = default;
 	bool JsComparator::operator()(JsHandle const &a, JsHandle const &b) const {
-		if (a.isNumber &&b.isNumber) {
+		if (a.isNumber && b.isNumber)
+		{
 			return a.numberVal < b.numberVal;
 		}
 
-		if (a.isString && b.isString) {
-			return a.stringVal < b.stringVal;
-		}
-
-		HandleScope hs(i);
-
+		v8::HandleScope hs(i);
 		Local<Context> ctx = i->GetCurrentContext();
+		Local<Value> la = Local<Value>::New(i, a.h);
+		Local<Value> lb = Local<Value>::New(i, b.h);
 
-		Local<Value> la = v8::Local<v8::Value>::New(i, a.h);
-		Local<Value> lb = v8::Local<v8::Value>::New(i, b.h);
-
-		// If they’re strictly equal, neither is less
 		if (la->StrictEquals(lb))
-		{
 			return false;
-		}
-
-		// Use V8’s generic Equals (returns Maybe<bool>)
-		Maybe<bool> maybeEq = la->Equals(ctx, lb);
-		bool isEq = maybeEq.FromMaybe(false);
-
-		if (isEq)
-		{
+		if (la->Equals(ctx, lb).FromMaybe(false))
 			return false;
-		}
 
-		// Last resort: compare type names or addresses for a stable ordering
-		// e.g. numbers < strings < objects, or pointer‐based tie breaker
-		// Here, we’ll just compare the pointer values of the persistent handles:
+		// tie-break on pointer addresses
 		auto pa = reinterpret_cast<uintptr_t>(*la);
 		auto pb = reinterpret_cast<uintptr_t>(*lb);
 
@@ -204,14 +177,6 @@ namespace BTreeAddon
 		{
 			outVal = Number::New(isolate, result->numberVal);
 		}
-		else if (result->isString)
-		{
-			outVal = String::NewFromUtf8(
-				isolate,
-				result->stringVal.c_str(),
-				NewStringType::kNormal
-			).ToLocalChecked();
-		}
 		else
 		{
 			outVal = Local<Value>::New(isolate, result->h);
@@ -280,41 +245,13 @@ namespace BTreeAddon
 
 		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
 		{
-			Local<Value> keyOut;
-			if (entry.first->isNumber)
-			{
-				keyOut = Number::New(isolate, entry.first->numberVal);
-			}
-			else if (entry.first->isString)
-			{
-				keyOut = String::NewFromUtf8(
-					isolate,
-					entry.first->stringVal.c_str(),
-					NewStringType::kNormal
-				).ToLocalChecked();
-			}
-			else
-			{
-				keyOut = Local<Value>::New(isolate, entry.first->h);
-			}
+			Local<Value> keyOut = entry.first->isNumber ?
+				entry.first->h.Get(isolate) :
+				Local<Value>::New(isolate, entry.first->h);
 
-			Local<Value> valOut;
-			if (entry.second->isNumber)
-			{
-				valOut = Number::New(isolate, entry.second->numberVal);
-			}
-			else if (entry.second->isString)
-			{
-				valOut = String::NewFromUtf8(
-					isolate,
-					entry.second->stringVal.c_str(),
-					NewStringType::kNormal
-				).ToLocalChecked();
-			}
-			else
-			{
-				valOut = Local<Value>::New(isolate, entry.second->h);
-			}
+			Local<Value> valOut = entry.second->isNumber ?
+				entry.second->h.Get(isolate) :
+				Local<Value>::New(isolate, entry.second->h);
 
 			result->Set(ctx, keyOut, valOut).ToLocalChecked();
 		}
@@ -343,41 +280,13 @@ namespace BTreeAddon
 
 		for (std::pair<const JsHandle*, JsHandle*> entry : entries)
 		{
-			Local<Value> keyOut;
-			if (entry.first->isNumber)
-			{
-				keyOut = Number::New(isolate, entry.first->numberVal);
-			}
-			else if (entry.first->isString)
-			{
-				keyOut = String::NewFromUtf8(
-					isolate,
-					entry.first->stringVal.c_str(),
-					NewStringType::kNormal)
-					.ToLocalChecked();
-			}
-			else
-			{
-				keyOut = Local<Value>::New(isolate, entry.first->h);
-			}
+			Local<Value> keyOut = entry.first->isNumber ?
+				entry.first->h.Get(isolate) :
+				Local<Value>::New(isolate, entry.first->h);
 
-			Local<Value> valOut;
-			if (entry.second->isNumber)
-			{
-				valOut = Number::New(isolate, entry.second->numberVal);
-			}
-			else if (entry.second->isString)
-			{
-				valOut = String::NewFromUtf8(
-					isolate,
-					entry.second->stringVal.c_str(),
-					NewStringType::kNormal)
-					.ToLocalChecked();
-			}
-			else
-			{
-				valOut = Local<Value>::New(isolate, entry.second->h);
-			}
+			Local<Value> valOut = entry.second->isNumber ?
+				entry.second->h.Get(isolate) :
+				Local<Value>::New(isolate, entry.second->h);
 
 			result->Set(ctx, keyOut, valOut).ToLocalChecked();
 		}
