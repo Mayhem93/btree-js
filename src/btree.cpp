@@ -16,6 +16,78 @@
 #include <functional>
 #endif
 
+template <typename Vec>
+inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type const &value)
+{
+	using T = typename Vec::value_type;
+
+	if constexpr (std::is_trivially_copyable_v<T>) {
+		vec.push_back(value);
+
+		T *data = vec.data();
+		std::memmove(
+			data + index + 1,
+			data + index,
+			(vec.size() - 1 - index) * sizeof(T));
+
+		data[index] = value;
+	} else {
+		vec.insert(std::next(vec.begin(), index), value);
+	}
+}
+
+template <typename Vec>
+inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_type const *src, size_t count)
+{
+	using T = typename Vec::value_type;
+
+	if constexpr (std::is_trivially_copyable_v<T>)
+	{
+		// Fast path: one resize + one memmove
+		if (count == 0)
+			return;
+
+		size_t oldSize = dst.size();
+		dst.resize(oldSize + count); // OK for trivially-copyable T
+		std::memmove(				 // copy all elements in one go
+			dst.data() + dstStart,
+			src,
+			count * sizeof(T)
+		);
+	}
+	else
+	{
+		// Fallback path for any non-trivial T:
+		// This version of insert(range) will invoke your copy/move ctors,
+		// never needing a default ctor.
+		dst.insert(
+			dst.begin() + dstStart,
+			src,
+			src + count
+		);
+	}
+}
+
+template <typename Vec>
+inline void trivial_erase(Vec &vec, size_t index)
+{
+	using T = typename Vec::value_type;
+
+	if constexpr (!std::is_trivially_copyable_v<T>) {
+		T *data = vec.data();
+
+		std::memmove(
+			data + index,
+			data + index + 1,
+			(vec.size() - index - 1) * sizeof(T)
+		);
+
+		vec.pop_back();
+	} else {
+		vec.erase(std::next(vec.begin(), index));
+	}
+}
+
 template<typename Key, typename Value, typename Compare>
 BTree<Key, Value, Compare>::Node::Node(bool leaf)
 	: isLeaf(leaf),
@@ -61,7 +133,7 @@ template <typename Key, typename Value, typename Compare>
 Value& BTree<Key, Value, Compare>::operator[](const Key &key)
 {
 	if (Value* p = search(key)) {
-		return	*p;
+		return *p;
 	}
 
 	throw std::out_of_range(std::format("BTree[] lookup failed: key {} not found", key));
@@ -86,7 +158,6 @@ void BTree<Key, Value, Compare>::destroyNode(Node *node)
 			destroyNode(child);
 		}
 	}
-	// leaf nodes have no children to recurse into
 
 	delete node;
 }
@@ -119,29 +190,53 @@ void BTree<Key, Value, Compare>::splitChild(Node* parent, size_t index)
 
 		Key promoteKey = sibling->leaf.entries.front().first;
 
-		parent->internal.keys.insert(parent->internal.keys.begin() + index, promoteKey);
-		parent->internal.children.insert(parent->internal.children.begin() + index + 1, sibling);
+		// parent->internal.keys.insert(parent->internal.keys.begin() + index, promoteKey);
+		// parent->internal.children.insert(parent->internal.children.begin() + index + 1, sibling);
+
+		trivial_insert(parent->internal.keys, index, promoteKey);
+		trivial_insert(parent->internal.children, index + 1, sibling);
 	} else {
 		size_t mid = BTree::s_CAPACITY - 1;
 		Key medianKey = std::move(child->internal.keys[mid]);
 
-		sibling->internal.keys.insert(
+		/* sibling->internal.keys.insert(
 			sibling->internal.keys.end(),
 			std::make_move_iterator(child->internal.keys.begin() + mid + 1),
 			std::make_move_iterator(child->internal.keys.end())
-		);
+		); */
 
-		sibling->internal.children.insert(
+		if (sibling->internal.keys.size() - mid - 1 > 0)
+		{
+			trivial_append_range(sibling->internal.keys,
+				sibling->internal.keys.size(),
+				child->internal.keys.data() + mid + 1,
+				child->internal.keys.size() - mid - 1
+			);
+		}
+
+		/* sibling->internal.children.insert(
 			sibling->internal.children.end(),
 			std::make_move_iterator(child->internal.children.begin() + mid + 1),
 			std::make_move_iterator(child->internal.children.end())
-		);
+		); */
+
+		if (sibling->internal.children.size() - mid - 1 > 0)
+		{
+			trivial_append_range(sibling->internal.children,
+				sibling->internal.children.size(),
+				child->internal.children.data() + mid + 1,
+				child->internal.children.size() - mid - 1
+			);
+		}
 
 		child->internal.keys.erase(child->internal.keys.begin() + mid, child->internal.keys.end());
 		child->internal.children.erase(child->internal.children.begin() + mid + 1, child->internal.children.end());
 
-		parent->internal.keys.insert(parent->internal.keys.begin() + index, std::move(medianKey));
-		parent->internal.children.insert(parent->internal.children.begin() + index + 1, sibling);
+		/* parent->internal.keys.insert(parent->internal.keys.begin() + index, std::move(medianKey));
+		parent->internal.children.insert(parent->internal.children.begin() + index + 1, sibling); */
+
+		trivial_insert(parent->internal.keys, index, std::move(medianKey));
+		trivial_insert(parent->internal.children, index + 1, sibling);
 	}
 }
 
@@ -591,8 +686,10 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, siz
 
 		left->keys.pop_back();
 
-		node->children.insert(node->children.begin(), c);
-		node->keys.insert(node->keys.begin(), sep);
+		// node->children.insert(node->children.begin(), c);
+		trivial_insert(node->children, 0, c);
+		// node->keys.insert(node->keys.begin(), sep);
+		trivial_insert(node->keys, 0, sep);
 
 		parent->keys[index - 1] = k2;
 
@@ -603,11 +700,13 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, siz
 		Key sep = parent->keys[index];
 		Node* c = right->children.front();
 
-		right->children.erase(right->children.begin());
+		// right->children.erase(right->children.begin());
+		trivial_erase(right->children, 0);
 
 		Key k2 = right->keys.front();
 
-		right->keys.erase(right->keys.begin());
+		// right->keys.erase(right->keys.begin());
+		trivial_erase(right->keys, 0);
 
 		node->children.push_back(c);
 		node->keys.push_back(sep);
@@ -623,8 +722,10 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, siz
 		left->keys.insert(left->keys.end(), node->keys.begin(), node->keys.end());
 		left->children.insert(left->children.end(), node->children.begin(), node->children.end());
 
-		parent->children.erase(parent->children.begin() + index);
-		parent->keys.erase(parent->keys.begin() + index - 1);
+		// parent->children.erase(parent->children.begin() + index);
+		trivial_erase(parent->children, index);
+		// parent->keys.erase(parent->keys.begin() + index - 1);
+		trivial_erase(parent->keys, index - 1);
 
 		delete node;
 	} else {
@@ -634,8 +735,10 @@ void BTree<Key, Value, Compare>::rebalanceInternal(Node* node, Node* parent, siz
 		node->keys.insert(node->keys.end(), right->keys.begin(), right->keys.end());
 		node->children.insert(node->children.end(), right->children.begin(), right->children.end());
 
-		parent->children.erase(parent->children.begin() + index + 1);
-		parent->keys.erase(parent->keys.begin() + index);
+		// parent->children.erase(parent->children.begin() + index + 1);
+		trivial_erase(parent->children, index + 1);
+		// parent->keys.erase(parent->keys.begin() + index);
+		trivial_erase(parent->keys, index);
 
 		delete right;
 	}

@@ -28,9 +28,12 @@ void standardTests(BTree<int, std::string>* tree) {
 	std::mt19937 generate(seed);
 
 	int firstKey, middleKey, lastKey;
+	std::vector<int> insertedKeys;
 	std::vector<int> keysToRemove;
 	std::vector<int> keysToSearch;
 	std::vector<int> bogusSearch;
+
+	insertedKeys.reserve(insertions);
 
 	auto t0_insert = std::chrono::steady_clock::now();
 
@@ -52,7 +55,11 @@ void standardTests(BTree<int, std::string>* tree) {
 			keysToSearch.push_back(toInsert);
 		}
 
-		tree->insert(toInsert, "1");
+		bool res = tree->insert(toInsert, "1");
+
+		if (res) {
+			insertedKeys.push_back(toInsert);
+		}
 	}
 
 	auto t1_insert = std::chrono::steady_clock::now();
@@ -73,7 +80,7 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	for (int key : keysToSearch)
 	{
-		std::string *result = tree->search(key);
+		tree->search(key);
 	}
 
 	auto t1_search = std::chrono::steady_clock::now();
@@ -161,6 +168,32 @@ void standardTests(BTree<int, std::string>* tree) {
 	{
 		std::cout << "exception: " << e.what() << std::endl;
 	}
+
+	std::vector<int> bogusSearchHeavy;
+
+	for (int i = 0; i < bogusSearch.size(); ++i)
+	{
+		bogusSearchHeavy.push_back(generate());
+	}
+
+	std::vector<int> heavySearchKeys;
+
+	heavySearchKeys.reserve(insertedKeys.size() + bogusSearchHeavy.size());
+	heavySearchKeys.insert(heavySearchKeys.end(), insertedKeys.begin(), insertedKeys.end());
+	heavySearchKeys.insert(heavySearchKeys.end(), bogusSearchHeavy.begin(), bogusSearchHeavy.end());
+
+	auto t0_searchHeavy = std::chrono::steady_clock::now();
+
+	for (int &key : heavySearchKeys)
+	{
+		tree->search(key);
+	}
+
+	auto t1_searchHeavy = std::chrono::steady_clock::now();
+
+	auto duration_searchHeavy = std::chrono::duration_cast<std::chrono::milliseconds>(t1_searchHeavy - t0_searchHeavy).count();
+
+	std::cout << "search-heavy-time: " << duration_searchHeavy << std::endl;
 }
 
 int main() {

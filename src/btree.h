@@ -3,11 +3,19 @@
 #include <vector>
 #include <cstddef>
 #include <functional>
+#include <string>
+#include <cstring>
+#include <type_traits>
 #include "boost/container/small_vector.hpp"
 
-#ifdef BTREE_ENABLE_JSON
-#include <string>
-#endif
+template <typename Vec>
+inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type const &value);
+
+template <typename Vec>
+inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_type const *src, size_t count);
+
+template <typename Vec>
+inline void trivial_erase(Vec &vec, size_t index);
 
 /**
  * @class BTree
@@ -19,7 +27,7 @@
  * @tparam Key     Type of the keys stored in the tree.
  * @tparam Value   Type of the values associated with each key.
  * @tparam Compare Functor used to order keys; defaults to `std::less<Key>`.
-*/
+ */
 template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
@@ -27,7 +35,7 @@ class BTree
 		/**
 		 * @brief The maximum number of entries per node.
 		*/
-		static constexpr size_t s_CAPACITY = 16;
+		static constexpr size_t s_CAPACITY = 32;
 		static constexpr size_t s_MAX_KEYS = 2 * s_CAPACITY - 1;
 		static constexpr size_t s_MAX_CHILDREN = 2 * s_CAPACITY;
 
@@ -44,7 +52,7 @@ class BTree
 		struct InternalNode
 		{
 			boost::container::small_vector<Key, s_MAX_KEYS> keys;
-			boost::container::small_vector<Node *, s_MAX_CHILDREN> children;
+			boost::container::small_vector<Node* , s_MAX_CHILDREN> children;
 
 			~InternalNode() = default;
 		};
@@ -71,9 +79,6 @@ class BTree
 			};
 
 			bool isLeaf;
-			// boost::container::small_vector<Key, s_MAX_KEYS> keys;
-			// boost::container::small_vector<Node*, s_MAX_CHILDREN> children;
-			// boost::container::small_vector<std::pair<Key, Value>, s_MAX_KEYS> entries;
 			Node* nextLeaf;
 			Node* prevLeaf;
 

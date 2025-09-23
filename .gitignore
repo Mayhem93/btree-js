@@ -9,3 +9,5 @@ out/*
 vcpkg_installed
 *.etl
 *.zip
+.vs/*
+CppProperties.json

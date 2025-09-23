@@ -15,7 +15,7 @@ namespace BTreeAddon
 
 		BTreeAddon::JsHandle(Isolate *isolate, Local<Value> value);
 		BTreeAddon::JsHandle(BTreeAddon::JsHandle const &other);
-		BTreeAddon::JsHandle &operator=(BTreeAddon::JsHandle const &other);
+		BTreeAddon::JsHandle& operator=(BTreeAddon::JsHandle const &other);
 
 		~JsHandle();
 	};

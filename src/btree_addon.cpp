@@ -18,10 +18,10 @@ namespace BTreeAddon {
   inline Local<Value> toV8String(Isolate *isolate, const std::string &str)
   {
     return String::NewFromUtf8(
-               isolate,
-               str.c_str(),
-               NewStringType::kNormal)
-        .ToLocalChecked();
+      isolate,
+      str.c_str(),
+      NewStringType::kNormal)
+    .ToLocalChecked();
   }
 
   void Initialize(Local<Object> exports) {

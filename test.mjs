@@ -15,6 +15,7 @@ function logMemory (label = '') {
 // 1) Pre-generate all keys & values
 const keys = new Uint32Array(MAX);
 const values = new Array(MAX);
+const bogusKeys = new Uint32Array(MAX / 4);
 
 for (let i = 0; i < MAX; i++) {
   // use Math.floor; avoids string parsing
@@ -22,15 +23,21 @@ for (let i = 0; i < MAX; i++) {
   values[i] = 'something';
 }
 
+for (let i = 0; i < MAX / 4; i++) {
+  // use Math.floor; avoids string parsing
+  bogusKeys[i] = Math.floor(Math.random() * (MAX / 4)**2 );
+}
+
 // 2) Warm up a bit (optional)
 for (let i = 0; i < 10000; i++) {
   Math.floor(Math.random() * 1000);
 }
 
+const tree = new BTreeJS();
+
 // 3) Benchmark B-Tree insert
 {
   logMemory('[BTREE] Before');
-  const tree = new BTreeJS();
 
   const t0 = process.hrtime.bigint();
 
@@ -43,10 +50,27 @@ for (let i = 0; i < 10000; i++) {
   logMemory('[BTREE] After');
 }
 
+const mixedKeys = new Uint32Array(keys.length + bogusKeys.length);
+
+mixedKeys.set(keys);
+mixedKeys.set(bogusKeys, keys.length);
+
+{
+  const t0 = process.hrtime.bigint();
+
+  for (let i = 0; i < mixedKeys.length; i++) {
+    tree.search(mixedKeys[i]);
+  }
+  const t1 = process.hrtime.bigint();
+
+  console.log(`BTree search: ${((t1 - t0) / 1000000n)} ms`);
+}
+
+const map = new Map();
+
 // 4) Benchmark Map insert + in-place sort
 {
   logMemory('[MAP()] Before');
-  const map = new Map();
 
   const t0 = process.hrtime.bigint();
 
@@ -60,6 +84,10 @@ for (let i = 0; i < 10000; i++) {
   arr.sort((a, b) => a[0] - b[0]);
   const t1 = process.hrtime.bigint();
 
-  console.log(`Map+sort:     ${((t1 - t0) / 1000000n)} ms`);
+  for (let k of mixedKeys) {
+    map.get(k);
+  }
+
+  console.log(`Map+sort+lookup:     ${((t1 - t0) / 1000000n)} ms`);
   logMemory('[MAP()] After');
 }
