@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['isleaf_0',['isLeaf',['../struct_b_tree_1_1_node.html#a0445ea5a691a0a093b72bfe61d43ec66',1,'BTree::Node']]]
+  ['m_5ftree_0',['m_Tree',['../class_b_tree_addon_1_1_b_tree_wrapper.html#a7dcc57e5ceca7d9d3516cadf595d5bb9',1,'BTreeAddon::BTreeWrapper']]]
 ];

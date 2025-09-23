@@ -92,25 +92,173 @@ $(function(){initNavTree('struct_b_tree_addon_1_1_js_comparator.html','','struct
   <div class="headertitle"><div class="title">BTreeAddon::JsComparator Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functor that provides a strict weak ordering for <a class="el" href="struct_b_tree_addon_1_1_js_handle.html" title="A lightweight wrapper for a V8 JavaScript value that can be used as a BTree&lt;Key, Value,...">JsHandle</a> keys.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="btree__wrapper_8h_source.html">btree_wrapper.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a12ea77957bc76f57487abcab2ebc04c7" id="r_a12ea77957bc76f57487abcab2ebc04c7"><td class="memItemLeft" align="right" valign="top"><a id="a12ea77957bc76f57487abcab2ebc04c7" name="a12ea77957bc76f57487abcab2ebc04c7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BTreeAddon::JsComparator</b> ()</td></tr>
-<tr class="memitem:ac5e078241cb43cc0c6624585d0e908ae" id="r_ac5e078241cb43cc0c6624585d0e908ae"><td class="memItemLeft" align="right" valign="top"><a id="ac5e078241cb43cc0c6624585d0e908ae" name="ac5e078241cb43cc0c6624585d0e908ae"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BTreeAddon::JsComparator</b> (Isolate *isolate)</td></tr>
-<tr class="memitem:a94429ab2fbbeb8fd4a161588f18a9b55" id="r_a94429ab2fbbeb8fd4a161588f18a9b55"><td class="memItemLeft" align="right" valign="top"><a id="a94429ab2fbbeb8fd4a161588f18a9b55" name="a94429ab2fbbeb8fd4a161588f18a9b55"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BTreeAddon::JsComparator</b> (<a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;o)</td></tr>
-<tr class="memitem:a1d488f2d9034238cfc652124097e7353" id="r_a1d488f2d9034238cfc652124097e7353"><td class="memItemLeft" align="right" valign="top"><a id="a1d488f2d9034238cfc652124097e7353" name="a1d488f2d9034238cfc652124097e7353"></a>
-<a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;o)</td></tr>
-<tr class="memitem:a12a65f97d3b59c2e722a744b1bba6ff8" id="r_a12a65f97d3b59c2e722a744b1bba6ff8"><td class="memItemLeft" align="right" valign="top"><a id="a12a65f97d3b59c2e722a744b1bba6ff8" name="a12a65f97d3b59c2e722a744b1bba6ff8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (<a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;a, <a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;b) const</td></tr>
+<tr class="memitem:a12ea77957bc76f57487abcab2ebc04c7" id="r_a12ea77957bc76f57487abcab2ebc04c7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12ea77957bc76f57487abcab2ebc04c7">BTreeAddon::JsComparator</a> ()</td></tr>
+<tr class="memdesc:a12ea77957bc76f57487abcab2ebc04c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that captures the current V8 isolate.  <br /></td></tr>
+<tr class="memitem:ac5e078241cb43cc0c6624585d0e908ae" id="r_ac5e078241cb43cc0c6624585d0e908ae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5e078241cb43cc0c6624585d0e908ae">BTreeAddon::JsComparator</a> (Isolate *isolate)</td></tr>
+<tr class="memdesc:ac5e078241cb43cc0c6624585d0e908ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a comparator using the given V8 isolate.  <br /></td></tr>
+<tr class="memitem:a94429ab2fbbeb8fd4a161588f18a9b55" id="r_a94429ab2fbbeb8fd4a161588f18a9b55"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94429ab2fbbeb8fd4a161588f18a9b55">BTreeAddon::JsComparator</a> (<a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;o)</td></tr>
+<tr class="memdesc:a94429ab2fbbeb8fd4a161588f18a9b55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy-constructs a <a class="el" href="struct_b_tree_addon_1_1_js_comparator.html" title="Functor that provides a strict weak ordering for JsHandle keys.">JsComparator</a>.  <br /></td></tr>
+<tr class="memitem:a1d488f2d9034238cfc652124097e7353" id="r_a1d488f2d9034238cfc652124097e7353"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d488f2d9034238cfc652124097e7353">operator=</a> (<a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;o)</td></tr>
+<tr class="memdesc:a1d488f2d9034238cfc652124097e7353"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy-assigns from another <a class="el" href="struct_b_tree_addon_1_1_js_comparator.html" title="Functor that provides a strict weak ordering for JsHandle keys.">JsComparator</a>.  <br /></td></tr>
+<tr class="memitem:a12a65f97d3b59c2e722a744b1bba6ff8" id="r_a12a65f97d3b59c2e722a744b1bba6ff8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12a65f97d3b59c2e722a744b1bba6ff8">operator()</a> (<a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;a, <a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;b) const</td></tr>
+<tr class="memdesc:a12a65f97d3b59c2e722a744b1bba6ff8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a less-than comparison between two <a class="el" href="struct_b_tree_addon_1_1_js_handle.html" title="A lightweight wrapper for a V8 JavaScript value that can be used as a BTree&lt;Key, Value,...">JsHandle</a> values.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9a8de3b85f8376e2e16e783482ca57a7" id="r_a9a8de3b85f8376e2e16e783482ca57a7"><td class="memItemLeft" align="right" valign="top"><a id="a9a8de3b85f8376e2e16e783482ca57a7" name="a9a8de3b85f8376e2e16e783482ca57a7"></a>
 Isolate *&#160;</td><td class="memItemRight" valign="bottom"><b>i</b></td></tr>
+<tr class="memdesc:a9a8de3b85f8376e2e16e783482ca57a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The V8 isolate this <a class="el" href="struct_b_tree_addon_1_1_js_comparator.html" title="Functor that provides a strict weak ordering for JsHandle keys.">JsComparator</a> is associated with. <br /></td></tr>
 </table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Functor that provides a strict weak ordering for <a class="el" href="struct_b_tree_addon_1_1_js_handle.html" title="A lightweight wrapper for a V8 JavaScript value that can be used as a BTree&lt;Key, Value,...">JsHandle</a> keys. </p>
+<p>Ensures a consistent, total ordering of JavaScript values in the B+Tree:</p><ul>
+<li>If both handles wrap numbers, compares their stored numberVal.</li>
+<li>Otherwise falls back to V8’s comparison APIs on the underlying Value. </li>
+</ul>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a12ea77957bc76f57487abcab2ebc04c7" name="a12ea77957bc76f57487abcab2ebc04c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12ea77957bc76f57487abcab2ebc04c7">&#9670;&#160;</a></span>BTreeAddon::JsComparator() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">BTreeAddon::JsComparator::BTreeAddon::JsComparator </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor that captures the current V8 isolate. </p>
+<p>If no isolate is explicitly provided, this pulls from the active V8 context. </p>
+
+</div>
+</div>
+<a id="a94429ab2fbbeb8fd4a161588f18a9b55" name="a94429ab2fbbeb8fd4a161588f18a9b55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94429ab2fbbeb8fd4a161588f18a9b55">&#9670;&#160;</a></span>BTreeAddon::JsComparator() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">BTreeAddon::JsComparator::BTreeAddon::JsComparator </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy-constructs a <a class="el" href="struct_b_tree_addon_1_1_js_comparator.html" title="Functor that provides a strict weak ordering for JsHandle keys.">JsComparator</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>The comparator to duplicate. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac5e078241cb43cc0c6624585d0e908ae" name="ac5e078241cb43cc0c6624585d0e908ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5e078241cb43cc0c6624585d0e908ae">&#9670;&#160;</a></span>BTreeAddon::JsComparator() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">BTreeAddon::JsComparator::BTreeAddon::JsComparator </td>
+          <td>(</td>
+          <td class="paramtype">Isolate *</td>          <td class="paramname"><span class="paramname"><em>isolate</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs a comparator using the given V8 isolate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">isolate</td><td>The V8 isolate to use for subsequent comparisons. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a12a65f97d3b59c2e722a744b1bba6ff8" name="a12a65f97d3b59c2e722a744b1bba6ff8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a65f97d3b59c2e722a744b1bba6ff8">&#9670;&#160;</a></span>operator()()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool BTreeAddon::JsComparator::operator() </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_b_tree_addon_1_1_js_handle.html">BTreeAddon::JsHandle</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Performs a less-than comparison between two <a class="el" href="struct_b_tree_addon_1_1_js_handle.html" title="A lightweight wrapper for a V8 JavaScript value that can be used as a BTree&lt;Key, Value,...">JsHandle</a> values. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The first JS value wrapper. </td></tr>
+    <tr><td class="paramname">b</td><td>The second JS value wrapper. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if <span class="tt">a</span> is considered less than <span class="tt">b</span> under JS ordering rules. </dd></dl>
+
+</div>
+</div>
+<a id="a1d488f2d9034238cfc652124097e7353" name="a1d488f2d9034238cfc652124097e7353"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d488f2d9034238cfc652124097e7353">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">JsComparator</a> &amp; BTreeAddon::JsComparator::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_b_tree_addon_1_1_js_comparator.html">BTreeAddon::JsComparator</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy-assigns from another <a class="el" href="struct_b_tree_addon_1_1_js_comparator.html" title="Functor that provides a strict weak ordering for JsHandle keys.">JsComparator</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>The source comparator. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this comparator after assignment. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/<a class="el" href="btree__wrapper_8h_source.html">btree_wrapper.h</a></li>
 <li>src/<b>btree_wrapper.cpp</b></li>

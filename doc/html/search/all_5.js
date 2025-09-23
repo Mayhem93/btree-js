@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['insert_0',['insert',['../class_b_tree.html#a1f618d0a26ec20a12ad3b05e06c78970',1,'BTree']]],
-  ['insertnonfull_1',['insertNonFull',['../class_b_tree.html#a760c03d4ce002fdc71a531e2c47b420b',1,'BTree']]],
-  ['internalnode_2',['InternalNode',['../struct_b_tree_1_1_internal_node.html',1,'BTree']]],
-  ['iterator_3',['Iterator',['../class_b_tree_1_1_iterator.html',1,'BTree']]]
+  ['h_0',['h',['../struct_b_tree_addon_1_1_js_handle.html#a3bcb807e64d8b9a7db4eed3f62c4b6b5',1,'BTreeAddon::JsHandle']]]
 ];

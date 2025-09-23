@@ -8,12 +8,94 @@
 #include <type_traits>
 #include "boost/container/small_vector.hpp"
 
+/**
+ * @brief Inserts a value into a vector at a given index using a fast
+ *        memmove for trivially-copyable types, and falls back to the
+ *        container’s insert for non-trivial types.
+ * 		  This helper provides a fast path for modifying vectors of
+ * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
+ *
+ * @tparam Vec
+ *   A vector-like container type whose value_type may be trivially
+ *   copyable or non-trivial.
+ *
+ * @param vec
+ *   The container into which the element will be inserted.
+ *
+ * @param index
+ *   Zero-based position at which to insert the new element.
+ *
+ * @param value
+ *   The element to insert. For trivially-copyable T this is copied
+ *   into place after a raw memmove; for non-trivial T, the container’s
+ *   normal insert(iterator, value) is used.
+ *
+ * @note
+ *   - For trivially-copyable T, this does one push_back, one memmove,
+ *     and one assignment—no element-by-element moves.
+ *   - For non-trivial T, this calls vec.insert(...) to
+ *     preserve correct construction and destruction semantics.
+*/
 template <typename Vec>
 inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type const &value);
 
+/**
+ * @brief Appends a contiguous range of elements from a raw pointer into a
+ *        vector, using a single memmove for trivially-copyable types and
+ *        falling back to the container’s insert(range) for non-trivial types.
+ * 		  This helper provides a fast path for modifying vectors of
+ * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
+ *
+ * @tparam Vec
+ *   A vector-like container whose value_type may be trivially
+ *   copyable or non-trivial.
+ *
+ * @param dst
+ *   The destination container to which elements will be appended.
+ *
+ * @param dstStart
+ *   The index in dst at which the first element from src should land.
+ *   Typically this is `dst.size()` to append at the end.
+ *
+ * @param src
+ *   Pointer to the first element of the source range.
+ *
+ * @param count
+ *   Number of elements in the source range to append.
+ *
+ * @note
+ *   - For trivially-copyable T, this resizes dst by count and then
+ *     memmoves all bytes from src into `dst.data() + dstStart` in one block.
+ *   - For non-trivial T, this calls `dst.insert(dst.begin()+dstStart,
+ *     src, src+count)` so that copy/move constructors and destructors are
+ *     properly invoked.
+*/
 template <typename Vec>
 inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_type const *src, size_t count);
 
+/**
+ * @brief Erases the element at a given index from a vector using a single
+ *        `memmove` and `pop_back` for trivially-copyable types, or falls back
+ *        to the container's erase for non-trivial types.
+ * 		  This helper provides a fast path for modifying vectors of
+ * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
+ *
+ * @tparam Vec
+ *   A vector-like container type whose `value_type` may be trivially
+ *   copyable or non-trivial.
+ *
+ * @param vec
+ *   The container from which the element will be removed.
+ *
+ * @param index
+ *   Zero-based position of the element to remove.
+ *
+ * @note
+ *   - For trivially-copyable T, this shifts the tail down by one slot
+ *     via memmove and then pops the last element.
+ *   - For non-trivial T, this calls vec.erase(iterator)
+ *     to invoke the correct destructor and shift semantics.
+*/
 template <typename Vec>
 inline void trivial_erase(Vec &vec, size_t index);
 
