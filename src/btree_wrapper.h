@@ -142,12 +142,12 @@ namespace BTreeAddon
 			 *
 			 *        Binds:
 			 *          - New()          → JS `new BTree()`
-			 *          - Insert()       → JS `tree.insert(key, value)`
-			 *          - Search()       → JS `tree.search(key)`
-			 *          - Remove()       → JS `tree.remove(key)`
-			 *          - Size()         → JS `tree.size()`
-			 *          - Range()        → JS `tree.range(start, end)`
-			 *          - RangeCount()   → JS `tree.range(start, count)`
+			 *          - Insert()       → JS `BTree::insert()`
+			 *          - Search()       → JS `BTree::search()`
+			 *          - Remove()       → JS `BTree::remove()`
+			 *          - Size()         → JS `BTree::size()`
+			 *          - Range()        → JS `BTree::range()`
+			 *          - RangeCount()   → JS `BTree::range()`
 			 *
 			 * @param exports The module exports to which the constructor is attached.
 			 */
@@ -168,7 +168,7 @@ namespace BTreeAddon
 			~BTreeWrapper() override;
 
 			/**
-			 * @brief JavaScript constructor for (`new BTree()`).
+			 * @brief JavaScript constructor for `new BTree()`.
 			 *
 			 *        Creates a new BTreeWrapper C++ object and wraps it in the JS `this`.
 			 *        Throws a TypeError if not called as a constructor.
@@ -179,20 +179,18 @@ namespace BTreeAddon
 			static void New(const FunctionCallbackInfo<Value>& args);
 
 			/**
-			 * @brief JS `BTree::insert(key, value)` method.
+			 * @brief JS `BTree::insert()` method.
 			 *
-			 *        Converts two JS values to JsHandle and invokes:
-			 *          `m_Tree->insert(keyHandle, valueHandle);`
+			 * Converts two JS values to JsHandle and invokes: `m_Tree->insert(keyHandle, valueHandle);`
 			 *
 			 * @param args args[0]=key, args[1]=value
 			*/
 			static void Insert(const FunctionCallbackInfo<Value>& args);
 
 			/**
-			 * @brief JS `BTree::search(key)` method.
+			 * @brief JS `BTree::search()` method.
 			 *
-			 *        Converts args[0] to JsHandle and invokes:
-			 *          `auto results = m_Tree->search(keyHandle);`
+			 * Converts args[0] to JsHandle and invokes: `m_Tree->search(keyHandle);`
 			 *        Returns a JS array of matching values.
 			 *
 			 * @param args args[0]=key
@@ -200,7 +198,7 @@ namespace BTreeAddon
 			static void Search(const FunctionCallbackInfo<Value>& args);
 
 			/**
-			 * @brief JS `BTree::remove(key)` method.
+			 * @brief JS `BTree::remove()` method.
 			 *
 			 *        Converts args[0] to JsHandle and invokes:
 			 *          `size_t removed = m_Tree->remove(keyHandle);`
@@ -222,18 +220,18 @@ namespace BTreeAddon
 			static void Size(const FunctionCallbackInfo<Value>& args);
 
 			/**
-			 * @brief JS `BTree::range(start, end)` method.
+			 * @brief JS `BTree::range(const Key &low, const Key &high)` method.
 			 *
 			 *        Converts args[0], args[1] to JsHandle and invokes:
 			 *          `auto results = m_Tree->range(startHandle, endHandle);`
 			 *        Returns a JS array of values in [start, end].
 			 *
 			 * @param args args[0]=startKey, args[1]=endKey
-			*/
+			 */
 			static void Range(const FunctionCallbackInfo<Value>& args);
 
 			/**
-			 * @brief JS `BTree::rangeCount(start, end)` method.
+			 * @brief JS `BTree::range(const Key &low, size_t count)` method.
 			 *
 			 *        Converts args[0], args[1] to JsHandle and invokes:
 			 *          `size_t count = m_Tree->rangeCount(startHandle, size_t(args[1]));`
