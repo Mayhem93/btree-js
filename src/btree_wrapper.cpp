@@ -294,6 +294,26 @@ namespace BTreeAddon
 		args.GetReturnValue().Set(result);
 	}
 
+	void BTreeWrapper::Move(const FunctionCallbackInfo<Value>& args) {
+		Isolate *isolate = args.GetIsolate();
+
+		if (args.Length() < 2) {
+			isolate->ThrowException(Exception::TypeError(
+				String::NewFromUtf8Literal(isolate, "move requires 2 arguments: from (number), to (number)"))
+			);
+
+			return ;
+		}
+
+		BTreeWrapper* wrap = ObjectWrap::Unwrap<BTreeWrapper>(args.Holder());
+		JsHandle from(isolate, args[0]);
+		JsHandle to(isolate, args[1]);
+
+		bool ok = wrap->m_Tree->move(from, to);
+
+		args.GetReturnValue().Set(Boolean::New(isolate, ok));
+	}
+
 	void BTreeWrapper::Init(Local<Object> exports)
 	{
 		Isolate *isolate = exports->GetIsolate();
@@ -310,6 +330,7 @@ namespace BTreeAddon
 		NODE_SET_PROTOTYPE_METHOD(tpl, "size", Size);
 		NODE_SET_PROTOTYPE_METHOD(tpl, "range", Range);
 		NODE_SET_PROTOTYPE_METHOD(tpl, "rangeCount", RangeCount);
+		NODE_SET_PROTOTYPE_METHOD(tpl, "move", Move);
 
 		s_Constructor.Reset(isolate, tpl->GetFunction(ctx).ToLocalChecked());
 

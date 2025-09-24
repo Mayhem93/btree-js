@@ -15,9 +15,15 @@
  * 		  This helper provides a fast path for modifying vectors of
  * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
  *
- * @tparam Vec
- *   A vector-like container type whose value_type may be trivially
- *   copyable or non-trivial.
+ * @tparam T
+ *   Type of the elements stored in the small_vector.
+ *
+ * @tparam N
+ * 	 The size of the small_vector to use.
+ *
+ * @tparam Options
+ *
+ * 	 Options to pass to boost::container::small_vector
  *
  * @param vec
  *   The container into which the element will be inserted.
@@ -36,8 +42,8 @@
  *   - For non-trivial T, this calls vec.insert(...) to
  *     preserve correct construction and destruction semantics.
 */
-template <typename Vec>
-inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type const &value);
+template <typename T, size_t N, typename... Options>
+inline void trivial_insert(boost::container::small_vector<T, N, Options...> &vec, size_t index, T const &value);
 
 /**
  * @brief Appends a contiguous range of elements from a raw pointer into a
@@ -46,9 +52,15 @@ inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type cons
  * 		  This helper provides a fast path for modifying vectors of
  * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
  *
- * @tparam Vec
- *   A vector-like container whose value_type may be trivially
- *   copyable or non-trivial.
+ * @tparam T
+ *   Type of the elements stored in the small_vector.
+ *
+ * @tparam N
+ * 	 The size of the small_vector to use.
+ *
+ * @tparam Options
+ *
+ * 	 Options to pass to boost::container::small_vector
  *
  * @param dst
  *   The destination container to which elements will be appended.
@@ -70,8 +82,8 @@ inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type cons
  *     src, src+count)` so that copy/move constructors and destructors are
  *     properly invoked.
 */
-template <typename Vec>
-inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_type const *src, size_t count);
+template <typename T, size_t N, typename... Options>
+inline void trivial_append_range(boost::container::small_vector<T, N, Options...> &dst, size_t dstStart, T const *src, size_t count);
 
 /**
  * @brief Erases the element at a given index from a vector using a single
@@ -80,9 +92,15 @@ inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_
  * 		  This helper provides a fast path for modifying vectors of
  * 		  trivially‐copyable elements—using a single block memmove (or pop_back) instead of expensive per‐element shifts
  *
- * @tparam Vec
- *   A vector-like container type whose `value_type` may be trivially
- *   copyable or non-trivial.
+ * @tparam T
+ *   Type of the elements stored in the small_vector.
+ *
+ * @tparam N
+ * 	 The size of the small_vector to use.
+ *
+ * @tparam Options
+ *
+ * 	 Options to pass to boost::container::small_vector
  *
  * @param vec
  *   The container from which the element will be removed.
@@ -96,8 +114,8 @@ inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_
  *   - For non-trivial T, this calls vec.erase(iterator)
  *     to invoke the correct destructor and shift semantics.
 */
-template <typename Vec>
-inline void trivial_erase(Vec &vec, size_t index);
+template <typename T, size_t N, typename... Options>
+inline void trivial_erase(boost::container::small_vector<T, N, Options...> &vec, size_t index);
 
 /**
  * @class BTree
@@ -109,7 +127,7 @@ inline void trivial_erase(Vec &vec, size_t index);
  * @tparam Key     Type of the keys stored in the tree.
  * @tparam Value   Type of the values associated with each key.
  * @tparam Compare Functor used to order keys; defaults to `std::less<Key>`.
- */
+*/
 template <typename Key, typename Value, typename Compare = std::less<Key>>
 class BTree
 {
@@ -249,6 +267,23 @@ class BTree
 		 * @return A vector of (key pointer, value pointer) pairs for the first `count` entries ≥ low.
 		*/
 		std::vector<std::pair<const Key*, Value*>> range(const Key &low, size_t count);
+
+		/**
+		 * @brief Moves a value from a key to another.
+		 *
+		 * Searches the tree for a value stored under `from`, removes the
+		 * entry, then reinserts the value under `to`.  Returns a boolean.
+		 *
+		 * This is equivalent to doing
+		 *   auto v = BTree::search(from);
+		 *   BTree::remove(from);
+		 *   BTree::insert(to, v);
+		 *
+		 * @param from  The key whose entries will be relocated.
+		 * @param to  	The key under which to store the moved entries.
+		 * @return      Boolean whether the move was successful or not.
+		*/
+		bool move(const Key &from, const Key &to);
 
 #ifdef BTREE_ENABLE_JSON
 		std::string serializeToJson() const;

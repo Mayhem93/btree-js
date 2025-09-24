@@ -242,6 +242,15 @@ namespace BTreeAddon
 			static void RangeCount(const FunctionCallbackInfo<Value>& args);
 
 			/**
+			 * @brief JS `BTree::move(const Key &from, const Key &to)` method.
+			 *
+			 *        Converts args[0], args[1] to JsHandle and invokes:
+			 *          `m_Tree->move(fromHandle, toHandle);`
+			 *        Returns a boolean whether the move was successful or not.
+			 */
+			static void Move(const FunctionCallbackInfo<Value>& args);
+
+			/**
 			 * @brief The underlying BTree<JsHandle,JsHandle,JsComparator> instance
 			 */
 			std::unique_ptr<BTreeJs> m_Tree;

@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <format>
 
+#include <boost/container/small_vector.hpp>
+
 #include "btree.h"
 
 #ifdef BTREE_ENABLE_JSON
@@ -16,11 +18,9 @@
 #include <functional>
 #endif
 
-template <typename Vec>
-inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type const &value)
+template <typename T, size_t N, typename ...Options>
+inline void trivial_insert(boost::container::small_vector<T, N, Options...> &vec, size_t index, T const &value)
 {
-	using T = typename Vec::value_type;
-
 	if constexpr (std::is_trivially_copyable_v<T>) {
 		vec.push_back(value);
 
@@ -36,11 +36,9 @@ inline void trivial_insert(Vec &vec, size_t index, typename Vec::value_type cons
 	}
 }
 
-template <typename Vec>
-inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_type const *src, size_t count)
+template <typename T, size_t N, typename... Options>
+inline void trivial_append_range(boost::container::small_vector<T, N, Options...> &dst, size_t dstStart, T const *src, size_t count)
 {
-	using T = typename Vec::value_type;
-
 	if constexpr (std::is_trivially_copyable_v<T>)
 	{
 		// Fast path: one resize + one memmove
@@ -68,13 +66,11 @@ inline void trivial_append_range(Vec &dst, size_t dstStart, typename Vec::value_
 	}
 }
 
-template <typename Vec>
-inline void trivial_erase(Vec &vec, size_t index)
+template <typename T, size_t N, typename... Options>
+inline void trivial_erase(boost::container::small_vector<T, N, Options...> &vec, size_t index)
 {
-	using T = typename Vec::value_type;
-
 	if constexpr (!std::is_trivially_copyable_v<T>) {
-		T *data = vec.data();
+		T* data = vec.data();
 
 		std::memmove(
 			data + index,
@@ -363,7 +359,7 @@ bool BTree<Key, Value, Compare>::remove(const Key& key)
 }
 
 template <typename Key, typename Value, typename Compare>
-auto BTree<Key, Value, Compare>::getPredecessor(Node *node, size_t idx) const -> Key
+Key BTree<Key, Value, Compare>::getPredecessor(Node *node, size_t idx) const
 {
 	Node *cur = node->internal.children[idx];
 
@@ -375,7 +371,7 @@ auto BTree<Key, Value, Compare>::getPredecessor(Node *node, size_t idx) const ->
 }
 
 template <typename Key, typename Value, typename Compare>
-auto BTree<Key, Value, Compare>::getSuccessor(Node *node, size_t idx) const -> Key
+Key BTree<Key, Value, Compare>::getSuccessor(Node *node, size_t idx) const
 {
 	Node *cur = node->internal.children[idx + 1];
 
@@ -549,10 +545,10 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 			// A2) Internal: three subcases
 			Node *leftChild = node->internal.children[idx];
 			Node *rightChild = node->internal.children[idx + 1];
-			auto leftCount = leftChild->isLeaf ? leftChild->leaf.entries.size()
-											   : leftChild->internal.keys.size();
-			auto rightCount = rightChild->isLeaf ? rightChild->leaf.entries.size()
-												 : rightChild->internal.keys.size();
+			size_t leftCount = leftChild->isLeaf ? leftChild->leaf.entries.size()
+							: leftChild->internal.keys.size();
+			size_t rightCount = rightChild->isLeaf ? rightChild->leaf.entries.size()
+							: rightChild->internal.keys.size();
 
 			if (leftCount >= BTree::s_CAPACITY)
 			{
@@ -586,8 +582,8 @@ void BTree<Key, Value, Compare>::removeFromNode(Node *node, const Key &key)
 
 		bool lastChild = (idx == node->internal.keys.size());
 		Node *child = node->internal.children[idx];
-		auto childCount = child->isLeaf ? child->leaf.entries.size()
-										: child->internal.keys.size();
+		size_t childCount = child->isLeaf ? child->leaf.entries.size()
+						: child->internal.keys.size();
 
 		// ensure child has at least CAPACITY keys
 		if (childCount < BTree::s_CAPACITY)
@@ -835,6 +831,22 @@ std::vector<std::pair<const Key *, Value *>> BTree<Key, Value, Compare>::range(c
 	}
 
 	return out;
+}
+
+template <typename Key, typename Value, typename Compare>
+bool BTree<Key, Value, Compare>::move(const Key &from, const Key &to)
+{
+	const Value* value = this->search(from);
+
+	if (!value)
+	{
+		return false;
+	}
+
+	this->remove(from);
+	this->insert(to, *value);
+
+	return true;
 }
 
 #ifdef BTREE_ENABLE_JSON
