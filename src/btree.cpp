@@ -240,12 +240,12 @@ template <typename Key, typename Value, typename Compare>
 bool BTree<Key, Value, Compare>::insertNonFull(Node* node, const Key& key, const Value& value)
 {
 	if (node->isLeaf) {
-		auto it = node->leaf.entries.begin();
-
-		while (it != node->leaf.entries.end() && less(it->first, key))
-		{
-			++it;
-		}
+		auto it = std::lower_bound(
+			node->leaf.entries.begin(),
+			node->leaf.entries.end(),
+			key,
+			[this](auto const &entry, auto const &v) { return less(entry.first, v); }
+		);
 
 		if (it != node->leaf.entries.end() && !less(key, it->first) && !less(it->first, key))
 		{
@@ -254,7 +254,7 @@ bool BTree<Key, Value, Compare>::insertNonFull(Node* node, const Key& key, const
 			return false;
 		}
 
-		node->leaf.entries.insert(it, {key, value});
+		node->leaf.entries.emplace(it, key, value);
 
 		return true;
 	}
@@ -311,14 +311,19 @@ Value* BTree<Key, Value, Compare>::search(const Key& key) const
 	Node* node = m_Root;
 
 	while (!node->isLeaf) {
-		auto it = std::lower_bound(
-			node->internal.keys.begin(),
-			node->internal.keys.end(),
+		auto *base = node->internal.keys.data();
+		size_t len = node->internal.keys.size();
+
+		// binary-search over the contiguous buffer
+		auto *pos = std::lower_bound(
+			base,
+			base + len,
 			key,
 			m_Comp
 		);
 
-		size_t idx = std::distance(node->internal.keys.begin(), it);
+		size_t idx = pos - base;
+
 		node = node->internal.children[idx];
 	}
 

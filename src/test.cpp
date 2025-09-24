@@ -28,6 +28,7 @@ void standardTests(BTree<int, std::string>* tree) {
 	std::mt19937 generate(seed);
 
 	int firstKey, middleKey, lastKey;
+	size_t searchHolder = 0;
 	std::vector<int> insertedKeys;
 	std::vector<int> keysToRemove;
 	std::vector<int> keysToSearch;
@@ -80,7 +81,8 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	for (int key : keysToSearch)
 	{
-		tree->search(key);
+		if(tree->search(key))
+			searchHolder++;
 	}
 
 	auto t1_search = std::chrono::steady_clock::now();
@@ -186,8 +188,11 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	for (int &key : heavySearchKeys)
 	{
-		tree->search(key);
+		if (tree->search(key))
+			searchHolder++;
 	}
+
+	std::cout << "search-holder: " << searchHolder << std::endl;
 
 	auto t1_searchHeavy = std::chrono::steady_clock::now();
 
