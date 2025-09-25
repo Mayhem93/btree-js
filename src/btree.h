@@ -135,7 +135,7 @@ class BTree
 		/**
 		 * @brief The maximum number of entries per node.
 		*/
-		static constexpr size_t s_CAPACITY = 32;
+		static constexpr size_t s_CAPACITY = 16;
 		static constexpr size_t s_MAX_KEYS = 2 * s_CAPACITY - 1;
 		static constexpr size_t s_MAX_CHILDREN = 2 * s_CAPACITY;
 
@@ -154,12 +154,21 @@ class BTree
 			boost::container::small_vector<Key, s_MAX_KEYS> keys;
 			boost::container::small_vector<Node* , s_MAX_CHILDREN> children;
 
+			InternalNode() {
+				keys.reserve(s_MAX_KEYS);
+				children.reserve(s_MAX_CHILDREN);
+			}
+
 			~InternalNode() = default;
 		};
 
 		struct LeafNode
 		{
-			boost::container::small_vector<std::pair<Key, Value>, s_MAX_KEYS> entries;
+			boost::container::small_vector<std::pair<Key, Value>, s_MAX_KEYS + 1> entries;
+
+			LeafNode() {
+				entries.reserve(s_MAX_KEYS + 1);
+			}
 
 			~LeafNode() = default;
 		};

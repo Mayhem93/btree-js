@@ -66,9 +66,9 @@ mixedKeys.set(bogusKeys, keys.length);
   console.log(`BTree search: ${((t1 - t0) / 1000000n)} ms`);
 }
 
-tree.move(mixedKeys[0], mixedKeys[1]);
+// tree.move(mixedKeys[0], mixedKeys[1]);
 
-const map = new Map();
+let map = new Map();
 
 // 4) Benchmark Map insert + in-place sort
 {
@@ -85,6 +85,8 @@ const map = new Map();
 
   arr.sort((a, b) => a[0] - b[0]);
   const t1 = process.hrtime.bigint();
+
+  map = new Map(arr);
 
   for (let k of mixedKeys) {
     map.get(k);

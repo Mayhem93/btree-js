@@ -4,7 +4,7 @@
 #include <chrono>
 #include <string>
 
-void jsonSerializationTests(BTree<int, std::string>* tree) {
+void jsonSerializationTests(BTree<int, std::string>& tree) {
 	const int insertions = 11;
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -14,13 +14,13 @@ void jsonSerializationTests(BTree<int, std::string>* tree) {
 	{
 		int toInsert = generate();
 
-		tree->insert(toInsert, "1");
+		tree.insert(toInsert, "1");
 	}
 
-	std::cout << tree->serializeToJson() << std::endl;
+	std::cout << tree.serializeToJson() << std::endl;
 }
 
-void standardTests(BTree<int, std::string>* tree) {
+void standardTests(BTree<int, std::string>& tree) {
 	const int insertions = 1e6;
 	const int middle = insertions / 2;
 
@@ -56,7 +56,7 @@ void standardTests(BTree<int, std::string>* tree) {
 			keysToSearch.push_back(toInsert);
 		}
 
-		bool res = tree->insert(toInsert, "1");
+		bool res = tree.insert(toInsert, "1");
 
 		if (res) {
 			insertedKeys.push_back(toInsert);
@@ -68,35 +68,15 @@ void standardTests(BTree<int, std::string>* tree) {
 	auto duration_insert = std::chrono::duration_cast<std::chrono::milliseconds>(t1_insert - t0_insert).count();
 
 	std::cout << "insert-time: " << duration_insert << std::endl;
-	std::cout << "size: " << tree->size() << std::endl;
+	std::cout << "size: " << tree.size() << std::endl;
 
-	for (int i = 0; i < 2000; ++i)
-	{
-		bogusSearch.push_back(generate());
-	}
-
-	keysToSearch.insert(keysToSearch.end(), bogusSearch.begin(), bogusSearch.end());
-
-	auto t0_search = std::chrono::steady_clock::now();
-
-	for (int key : keysToSearch)
-	{
-		if(tree->search(key))
-			searchHolder++;
-	}
-
-	auto t1_search = std::chrono::steady_clock::now();
-
-	auto duration_search = std::chrono::duration_cast<std::chrono::milliseconds>(t1_search - t0_search).count();
-
-	std::cout << "search-time: " << duration_search << std::endl;
 	size_t failedToRemove = 0;
 
 	auto t0_remove = std::chrono::steady_clock::now();
 
 	for (int keyToRemove : keysToRemove)
 	{
-		const bool result = tree->remove(keyToRemove);
+		const bool result = tree.remove(keyToRemove);
 
 		if (!result)
 		{
@@ -110,12 +90,12 @@ void standardTests(BTree<int, std::string>* tree) {
 	auto duration_remove = std::chrono::duration_cast<std::chrono::milliseconds>(t1_remove - t0_remove).count();
 
 	std::cout << "remove-time: " << duration_remove << std::endl;
-	std::cout << "final size: " << tree->size() << std::endl;
+	std::cout << "final size: " << tree.size() << std::endl;
 	std::cout << "failed removals: " << failedToRemove << std::endl;
 
 	auto t0_walk = std::chrono::steady_clock::now();
 
-	for (auto &&[key, value] : *tree)
+	for (auto &&[key, value] : tree)
 	{
 		if (key % 23399 == 0)
 		{
@@ -131,7 +111,7 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	auto t0_range = std::chrono::steady_clock::now();
 
-	auto range = tree->range(middleKey, size_t{10});
+	auto range = tree.range(middleKey, size_t{10});
 	auto [firstResultKey, firstResultValue] = range[0];
 	auto [lastResultKey, lastResultValue] = range[range.size() - 1];
 
@@ -152,43 +132,43 @@ void standardTests(BTree<int, std::string>* tree) {
 
 	std::cout << "range-time: " << duration_range << std::endl;
 
-	auto range2 = tree->range(*firstResultKey, *lastResultKey);
+	auto range2 = tree.range(*firstResultKey, *lastResultKey);
 
 	std::cout << "range2-size: " << range2.size() << std::endl;
 
 	std::cout << "Range2: get the 5th " << *range2[5].second << std::endl;
 
-	(*tree)[*firstResultKey] = std::string("AALLOOOOO");
+	tree[*firstResultKey] = std::string("AALLOOOOO");
 
 	std::cout << "X2 sa moar copii mei valoarea lu cristos " << *firstResultValue << std::endl;
 
 	try
 	{
-		(*tree)[123] = std::string("AALLOOOOO");
+		tree[123] = std::string("AALLOOOOO");
 	}
 	catch (std::exception &e)
 	{
 		std::cout << "exception: " << e.what() << std::endl;
 	}
 
-	std::vector<int> bogusSearchHeavy;
-
-	for (int i = 0; i < bogusSearch.size(); ++i)
+	for (int i = 0; i < insertions / 4; ++i)
 	{
-		bogusSearchHeavy.push_back(generate());
+		bogusSearch.push_back(generate());
 	}
 
 	std::vector<int> heavySearchKeys;
 
-	heavySearchKeys.reserve(insertedKeys.size() + bogusSearchHeavy.size());
+	heavySearchKeys.reserve(insertedKeys.size() + bogusSearch.size());
 	heavySearchKeys.insert(heavySearchKeys.end(), insertedKeys.begin(), insertedKeys.end());
-	heavySearchKeys.insert(heavySearchKeys.end(), bogusSearchHeavy.begin(), bogusSearchHeavy.end());
+	heavySearchKeys.insert(heavySearchKeys.end(), bogusSearch.begin(), bogusSearch.end());
+
+	std::cout << "heavy search count: " << heavySearchKeys.size() << " = " << insertedKeys.size() << " + " << bogusSearch.size() << std::endl;
 
 	auto t0_searchHeavy = std::chrono::steady_clock::now();
 
 	for (int &key : heavySearchKeys)
 	{
-		if (tree->search(key))
+		if (tree.search(key))
 			searchHolder++;
 	}
 
@@ -201,12 +181,73 @@ void standardTests(BTree<int, std::string>* tree) {
 	std::cout << "search-heavy-time: " << duration_searchHeavy << std::endl;
 }
 
+void orderedMapTests() {
+	std::cout << "=========== orderedMapTests ===========" << std::endl;
+	size_t insertions = 1e6;
+	std::vector<int> insertedItems;
+	std::vector<int> bogusSearchItems;
+	std::map<int, std::string> map;
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::mt19937 generate(seed);
+	int itemsFound = 0;
+
+	insertedItems.reserve(insertions);
+	bogusSearchItems.reserve(insertions / 4);
+
+	for (int i = 0; i < insertions / 4; ++i)
+	{
+		bogusSearchItems.push_back(generate());
+	}
+
+	auto t0 = std::chrono::steady_clock::now();
+
+	for (int i = 0; i < insertions; ++i)
+	{
+		int toInsert = generate();
+		const auto [it, success] = map.insert({ toInsert, "1" });
+
+		if (success) {
+			insertedItems.push_back(toInsert);
+		}
+	}
+
+	auto t1 = std::chrono::steady_clock::now();
+
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+
+	std::cout << "ordered-map-insertions: " << map.size() << std::endl;
+	std::cout << "ordered-map-insert-time: " << duration << std::endl;
+
+	auto t0_search = std::chrono::steady_clock::now();
+
+	for (int item : insertedItems) {
+		if (auto search = map.find(item); search != map.end()) {
+			itemsFound++;
+		}
+	}
+
+	for (int item : bogusSearchItems) {
+		if (auto search = map.find(item); search != map.end()) {
+			itemsFound++;
+		}
+	}
+
+	auto t1_search = std::chrono::steady_clock::now();
+
+	auto duration_search = std::chrono::duration_cast<std::chrono::milliseconds>(t1_search - t0_search).count();
+
+	std::cout << "ordered-map-search-time: " << duration_search << std::endl;
+	std::cout << "ordered-map-items-found: " << itemsFound << std::endl;
+}
+
 int main() {
 	auto tree = std::make_unique<BTree<int, std::string>>();
 
-	standardTests(tree.get());
+	standardTests(*tree);
 
-	// jsonSerializationTests(tree.get());
+	orderedMapTests();
+
+	// jsonSerializationTests(*tree);
 
 	return 0;
 }
