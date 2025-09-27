@@ -8,6 +8,13 @@ This project was done for my own pleasure and education as I have not coded in a
 
 ## Prerequisites
 
+### Libs
+
+All the libs here are installed through `vcpkg`
+
+* [boost-container](https://github.com/boostorg/container) (header only)
+* [nlohmann-json](https://github.com/nlohmann/json) (header only)
+
 ### vcpkg
 
 * Install vcpkg put in $PATH and make sure to add a user env variable "VCPKG_ROOT" to where you installed it

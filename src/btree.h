@@ -6,6 +6,7 @@
 #include <string>
 #include <cstring>
 #include <type_traits>
+#include <memory>
 #include "boost/container/small_vector.hpp"
 
 /**
@@ -370,6 +371,25 @@ class BTree
 		Node* m_Root;
 		Compare m_Comp;
 		size_t m_Size{0};
+		static constexpr size_t s_BLOCK_NODES = 1024;
+		static constexpr size_t s_BLOCK_BYTES = s_BLOCK_NODES * sizeof(Node);
+
+		struct NodePool
+		{
+			std::vector<std::unique_ptr<uint8_t[]>> blocks;
+			uint8_t* currentBlock;
+			size_t offset;
+
+			NodePool();
+
+			void addBlock();
+			Node* allocate(bool isLeaf);
+		};
+
+		NodePool m_nodePool;
+
+		Node* allocateNode(bool isLeaf);
+		void destroyNode(Node *node);
 
 		/**
 		 * Divides a full child node into two siblings by moving the upper half of its
@@ -521,17 +541,6 @@ class BTree
 		 *                  right sibling lives at `idx + 1`.
 		*/
 		void mergeNodes(Node *node, size_t idx);
-
-		/**
-		 * Recursively deletes the subtree rooted at `node`, freeing all allocated nodes.
-		 *
-		 * This routine traverses each child pointer, invokes itself on that child,
-		 * then deletes `node` itself. It is called by the destructor to teardown the
-		 * entire tree.
-		 *
-		 * @param  node     Pointer to the root of the subtree to destroy.
-		*/
-		void destroyNode(Node *node);
 
 		/**
 		 * Compares two keys, wrapper function for `Compare m_Comp`

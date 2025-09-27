@@ -68,10 +68,10 @@ mixedKeys.set(bogusKeys, keys.length);
 
 // tree.move(mixedKeys[0], mixedKeys[1]);
 
-let map = new Map();
-
 // 4) Benchmark Map insert + in-place sort
 {
+  let map = new Map();
+
   logMemory('[MAP()] Before');
 
   const t0 = process.hrtime.bigint();

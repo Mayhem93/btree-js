@@ -100,6 +100,7 @@ void standardTests(BTree<int, std::string>& tree) {
 		if (key % 23399 == 0)
 		{
 			// std::cout << "walk\t" << key << ": " << value << std::endl;
+			value = "wow x2";
 		}
 	}
 
@@ -136,7 +137,7 @@ void standardTests(BTree<int, std::string>& tree) {
 
 	std::cout << "range2-size: " << range2.size() << std::endl;
 
-	std::cout << "Range2: get the 5th " << *range2[5].second << std::endl;
+	std::cout << "Range2: [5] " << *range2[5].second << std::endl;
 
 	tree[*firstResultKey] = std::string("AALLOOOOO");
 
